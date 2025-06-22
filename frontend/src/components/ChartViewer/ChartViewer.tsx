@@ -63,10 +63,10 @@ const ChartViewer: React.FC<Props> = ({ data }) => {
                         const index = context.dataIndex;
                         
                         if (context.dataset.label === t("perfectGoal")) {
-                            return `${datasetLabel} - $${context.raw}`;
+                            return `${datasetLabel} : $${context.raw}`;
                         } else {
                             const percent = actualPecentData[index];
-                            return `${t("actualGoal")} ${percent} - $${context.raw}`;
+                            return `${t("actualGoal")} ${percent} : $${context.raw}`;
                         }
                     }
                 }
