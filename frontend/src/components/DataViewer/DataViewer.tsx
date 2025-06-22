@@ -5,6 +5,7 @@ import ChartViewer from "../ChartViewer/ChartViewer";
 import { TransformRow } from "../../helpers/types";
 import { useTranslation } from "react-i18next";
 import { translateMonth } from "../../locales/monthTranslator/monthTranslator";
+import './DataViewer.css'
 
 interface DataViewerProps {
   sheetName: string;
@@ -48,7 +49,13 @@ const DataViewer: React.FC<DataViewerProps> = ({ sheetName }) => {
     setTranslatedMonths(updated);
   },[i18n.language, filteredData])
 
-  if (loading) return <p>Завантаження...</p>;
+  if (loading) {
+    return (
+      <div className="spinner-box">
+        <div className="spinner"></div>
+      </div>
+    )
+  }
   if (!data.length) return <p>Немає даних</p>;
 
   return (
