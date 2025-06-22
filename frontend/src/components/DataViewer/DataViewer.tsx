@@ -63,7 +63,7 @@ const DataViewer: React.FC<DataViewerProps> = ({ sheetName }) => {
         cellPadding={5}
         cellSpacing={0}
         style={{ 
-          // display: 'none', 
+          display: 'none', 
           width: "100%", 
           borderCollapse: "collapse", 
           tableLayout: "fixed" 
