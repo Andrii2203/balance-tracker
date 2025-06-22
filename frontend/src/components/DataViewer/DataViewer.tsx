@@ -60,7 +60,7 @@ const DataViewer: React.FC<DataViewerProps> = ({ sheetName }) => {
 
   return (
     <div>
-      <div>
+      <div className="btn-box">
         <button onClick={() => i18n.changeLanguage('ua')}>UA</button>
         <button onClick={() => i18n.changeLanguage('pl')}>PL</button>
         <button onClick={() => i18n.changeLanguage('en')}>EN</button>
