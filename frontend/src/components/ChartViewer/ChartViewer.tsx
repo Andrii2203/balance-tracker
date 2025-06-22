@@ -73,9 +73,19 @@ const ChartViewer: React.FC<Props> = ({ data }) => {
             },
         },
         scales: {
+            x: {
+                ticks: {
+                    font: {
+                        size: 13,
+                    }
+                }
+            },
             y: {
                 beginAtZero: true,
                 ticks: {
+                    font: {
+                        size: 15,
+                    },
                     callback: function (value: number | string) {
                         if (Number(value) === maxY) {
                             return `🤑${value}`;
