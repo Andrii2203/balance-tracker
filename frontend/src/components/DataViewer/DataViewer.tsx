@@ -56,7 +56,7 @@ const DataViewer: React.FC<DataViewerProps> = ({ sheetName }) => {
       </div>
     )
   }
-  if (!data.length) return <p>Немає даних</p>;
+  if (!data.length) return <p>No data</p>;
 
   return (
     <div>
