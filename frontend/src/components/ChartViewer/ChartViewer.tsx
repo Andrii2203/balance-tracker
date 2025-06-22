@@ -55,7 +55,8 @@ const ChartViewer: React.FC<Props> = ({ data }) => {
         aspectRatio: 1,
         plugins: {
             legend: {
-                position: "top" as const,
+                position: "bottom" as const,
+                align: 'start' as const,
                 labels: {
                     font: {
                         size: 13
