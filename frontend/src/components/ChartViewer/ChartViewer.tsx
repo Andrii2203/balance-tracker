@@ -55,6 +55,11 @@ const ChartViewer: React.FC<Props> = ({ data }) => {
         plugins: {
             legend: {
                 position: "top" as const,
+                labels: {
+                    font: {
+                        size: 13
+                    }
+                }
             },
             tooltip: {
                 callbacks: {
