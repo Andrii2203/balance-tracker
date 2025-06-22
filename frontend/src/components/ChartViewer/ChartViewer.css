@@ -1,0 +1,18 @@
+.chart-js-box {
+    width: 100%;
+    overflow: auto;
+    margin: 0;
+}
+
+.our-money-p {
+    font-size: 22px;
+    margin: 0;
+    padding: 15px 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: black;
+    font-family: 'Times New Roman', Times, serif;
+    font-weight: 600;
+    background-color: rgb(230, 230, 230);
+}

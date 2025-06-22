@@ -5,6 +5,7 @@ import { TransformRow } from "../../helpers/types";
 import i18n from "../../i18n";
 import { translateMonth } from "../../locales/monthTranslator/monthTranslator";
 import { useTranslation } from "react-i18next";
+import './ChartViewer.css'
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend);
 
@@ -107,11 +108,11 @@ const ChartViewer: React.FC<Props> = ({ data }) => {
     };
 
     return (
-        <div style={{ width: "100%", overflowX: "auto", margin: '0' }}>
+        <div className="chart-js-box">
             <div style={{ 
                 minWidth: `${Math.max(perfectGoalData.length * 20, 100)}px`,
             }}>
-                <p>{t('ourMoney')}: ${maxY}</p>
+                <p className="our-money-p">{t('ourMoney')}: ${maxY}</p>
                 <Bar key={chartKey} data={chartConfig} options={options} />
             </div>
         </div>

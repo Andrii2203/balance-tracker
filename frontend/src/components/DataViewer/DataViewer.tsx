@@ -34,7 +34,7 @@ const DataViewer: React.FC<DataViewerProps> = ({ sheetName }) => {
         actualPecent: row[columnMap.actualPecent] || 0,
         month: translateMonth(row[columnMap.month]),
       }));
-      console.log('transformed', transformed);
+      // console.log('transformed', transformed);
 
       setFilteredData(transformed);
       setHeaders(['perfectGoal', 'ourMoney', 'actualGoal', 'actualPecent', 'month']);
