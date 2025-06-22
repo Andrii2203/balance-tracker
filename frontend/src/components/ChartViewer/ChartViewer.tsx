@@ -22,7 +22,6 @@ const ChartViewer: React.FC<Props> = ({ data }) => {
     }, [data, i18n.language])
 
     const labels = data.map((row) => translateMonth(row.month));
-    // const labels = data.map((row) => row.month);
     const actualGoalData = data.map((row) => row.actualGoal);
     const perfectGoalData = data.map((row) => row.perfectGoal);
     const actualPecentData = data.map((row) => row.actualPecent);
@@ -51,6 +50,8 @@ const ChartViewer: React.FC<Props> = ({ data }) => {
 
     const options = {
         responsive: true,
+        maintainAspectRatio: true,
+        aspectRatio: 1,
         plugins: {
             legend: {
                 position: "top" as const,
@@ -74,11 +75,10 @@ const ChartViewer: React.FC<Props> = ({ data }) => {
         scales: {
             y: {
                 beginAtZero: true,
-                max: maxY,
                 ticks: {
                     callback: function (value: number | string) {
                         if (Number(value) === maxY) {
-                            return `🟢🎯🤑 ${value}`;
+                            return `🤑${value}`;
                         }
                         return value;
                     },
@@ -92,8 +92,11 @@ const ChartViewer: React.FC<Props> = ({ data }) => {
     };
 
     return (
-        <div style={{ overflowX: "auto" }}>
-            <div style={{ width: `${perfectGoalData.length * 100}px`, maxWidth: "800px", margin: "auto", paddingTop:'30px', }}>
+        <div style={{ width: "100%", overflowX: "auto", margin: '0' }}>
+            <div style={{ 
+                minWidth: `${Math.max(perfectGoalData.length * 20, 100)}px`,
+            }}>
+                <p>{t('ourMoney')}: ${maxY}</p>
                 <Bar key={chartKey} data={chartConfig} options={options} />
             </div>
         </div>
