@@ -113,6 +113,7 @@ const ChartViewer: React.FC<Props> = ({ data }) => {
             <div style={{ 
                 minWidth: `${Math.max(perfectGoalData.length * 20, 100)}px`,
             }}>
+                <p className="amarkets-p">AMarkets</p>
                 <p className="our-money-p">{t('ourMoney')}: ${maxY}</p>
                 <Bar key={chartKey} data={chartConfig} options={options} />
             </div>
