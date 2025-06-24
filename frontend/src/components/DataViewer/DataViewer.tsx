@@ -8,13 +8,14 @@ import { translateMonth } from "../../locales/monthTranslator/monthTranslator";
 import './DataViewer.css'
 import LanguageSwitcher from "../LanguageSwitcher/LanguageSwitcher";
 import Spinner from "../Spinner/Spinner";
+import DataTable from "../DataTable/DataTable";
 
 interface DataViewerProps {
   sheetName: string;
 }
 
 const DataViewer: React.FC<DataViewerProps> = ({ sheetName }) => {
-  const { t, i18n } = useTranslation();
+  const { i18n } = useTranslation();
   const { data, loading } = useFetchData(sheetName);
   const [filteredData, setFilteredData] = useState<TransformRow[]>([]);
   const [headers, setHeaders] = useState<string[]>([]);
@@ -36,7 +37,6 @@ const DataViewer: React.FC<DataViewerProps> = ({ sheetName }) => {
         actualPecent: row[columnMap.actualPecent] || 0,
         month: translateMonth(row[columnMap.month]),
       }));
-      // console.log('transformed', transformed);
 
       setFilteredData(transformed);
       setHeaders(['perfectGoal', 'ourMoney', 'actualGoal', 'actualPecent', 'month']);
@@ -51,44 +51,13 @@ const DataViewer: React.FC<DataViewerProps> = ({ sheetName }) => {
     setTranslatedMonths(updated);
   },[i18n.language, filteredData])
 
-  if (loading) {
-    return <Spinner />;
-  }
+  if (loading) return <Spinner />
   if (!data.length) return <p>No data</p>;
 
   return (
     <div>
       <LanguageSwitcher />
-      <table
-        border={1}
-        cellPadding={5}
-        cellSpacing={0}
-        style={{ 
-          display: 'none', 
-          width: "100%", 
-          borderCollapse: "collapse", 
-          tableLayout: "fixed" 
-        }}
-      >
-        <thead>
-          <tr>
-            {headers.map((h) => (
-              <th key={h}>{t(h)}</th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {filteredData.map((row, i) => (
-            <tr key={i}>
-              {headers.map((h) => (
-                <td key={h}>
-                  {h === 'month' ? translatedMonths[i] : row[h as keyof typeof row]}
-                </td>
-              ))}
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <DataTable headers={headers} filteredData={filteredData} translatedMonths={translatedMonths}/>
       <ChartViewer sheetName={sheetName} data={filteredData} />
     </div>
   );
