@@ -6,6 +6,7 @@ import { TransformRow } from "../../helpers/types";
 import { useTranslation } from "react-i18next";
 import { translateMonth } from "../../locales/monthTranslator/monthTranslator";
 import './DataViewer.css'
+import LanguageSwitcher from "../LanguageSwitcher/LanguageSwitcher";
 
 interface DataViewerProps {
   sheetName: string;
@@ -60,11 +61,7 @@ const DataViewer: React.FC<DataViewerProps> = ({ sheetName }) => {
 
   return (
     <div>
-      <div className="btn-box">
-        <button onClick={() => i18n.changeLanguage('ua')}>UA</button>
-        <button onClick={() => i18n.changeLanguage('pl')}>PL</button>
-        <button onClick={() => i18n.changeLanguage('en')}>EN</button>
-      </div>
+      <LanguageSwitcher />
       <table
         border={1}
         cellPadding={5}
