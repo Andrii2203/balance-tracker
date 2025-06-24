@@ -1,4 +1,7 @@
 {
+    "hello": "Witaj, {{name}}!",
+    "login": "Zaloguj się",
+    "name_placeholder": "Wprowadź imię",
     "perfectGoal": "Cel 20%",
     "ourMoney": "Faktyczne",
     "actualGoal": "Rzeczywisty cel",

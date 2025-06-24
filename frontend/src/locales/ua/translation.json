@@ -1,4 +1,7 @@
 {
+    "hello": "Привіт, {{name}}!",
+    "login": "Увійти",
+    "name_placeholder": "Введіть ім’я",
     "perfectGoal": "Ціль 20%",
     "ourMoney": "Факт",
     "actualGoal": "Досягнуто цілі",
