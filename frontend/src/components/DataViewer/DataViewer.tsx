@@ -7,6 +7,7 @@ import { useTranslation } from "react-i18next";
 import { translateMonth } from "../../locales/monthTranslator/monthTranslator";
 import './DataViewer.css'
 import LanguageSwitcher from "../LanguageSwitcher/LanguageSwitcher";
+import Spinner from "../Spinner/Spinner";
 
 interface DataViewerProps {
   sheetName: string;
@@ -51,11 +52,7 @@ const DataViewer: React.FC<DataViewerProps> = ({ sheetName }) => {
   },[i18n.language, filteredData])
 
   if (loading) {
-    return (
-      <div className="spinner-box">
-        <div className="spinner"></div>
-      </div>
-    )
+    return <Spinner />;
   }
   if (!data.length) return <p>No data</p>;
 
