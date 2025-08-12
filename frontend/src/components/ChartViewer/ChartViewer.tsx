@@ -28,6 +28,10 @@ const ChartViewer: React.FC<Props> = ({ data }) => {
     const actualPecentData = data.map((row) => row.actualPecent);
     const ourMoney = data.map((row) => row.ourMoney);
     const maxY = ourMoney.length ? Math.max(...ourMoney) : 100;
+    const filteredData = ourMoney.filter(num => num !== 0);
+    const lastMonthMoney = filteredData.length > 0 ? filteredData[filteredData.length - 1] : 0;
+    const secondLastValue = filteredData[filteredData.length - 2];
+    const differenceFromPrevMonth = lastMonthMoney - secondLastValue;
 
     const chartConfig = {
         labels,
@@ -114,8 +118,13 @@ const ChartViewer: React.FC<Props> = ({ data }) => {
                 minWidth: `${Math.max(perfectGoalData.length * 20, 100)}px`,
             }}>
                 <p className="amarkets-p">AMarkets</p>
-                <p className="our-money-p">{t('ourMoney')}: ${maxY}</p>
+                <p className="our-money-p">{t('ourMoney')}: ${lastMonthMoney}</p>
                 <Bar key={chartKey} data={chartConfig} options={options} />
+                {differenceFromPrevMonth < 0 ? (
+                    <p className="difference-p">
+                        {t('prevMonth')} ${secondLastValue} - {t('now').toLowerCase()} ${lastMonthMoney} = {t('ourMoney').toLowerCase()} ${differenceFromPrevMonth} {t('per').toLowerCase()} {t('month').toLowerCase()}
+                    </p>
+                ) : null}
             </div>
         </div>
     );

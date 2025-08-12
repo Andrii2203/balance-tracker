@@ -6,5 +6,8 @@
     "ourMoney": "Faktyczne",
     "actualGoal": "Rzeczywisty cel",
     "actualPecent": "Osiągnięto %",
-    "month": "Miesiąc"
+    "month": "Miesiąc",
+    "prevMonth": "Poprzedni miesiąc",
+    "now": "Dzisiaj",
+    "per": "Za"
 }

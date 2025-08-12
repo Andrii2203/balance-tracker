@@ -6,5 +6,8 @@
     "ourMoney": "Actual",
     "actualGoal": "Actual goal",
     "actualPecent": "Actual %",
-    "month": "Month"
+    "month": "Month",
+    "prevMonth": "Previous month",
+    "now": "Now",
+    "per": "Per"
 }

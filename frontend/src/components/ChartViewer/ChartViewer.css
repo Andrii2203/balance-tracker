@@ -26,3 +26,9 @@
     font-weight: 600;
     background-color: rgb(230, 230, 230);
 }
+.difference-p {
+    text-align: center;
+    color: rgb(228, 10, 10);
+    font-size: 14px;
+    font-weight: 700;
+}
