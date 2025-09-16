@@ -44,7 +44,7 @@ export const newsData = [
     {
         id: 8, 
         title: 'One trade a day keeps the 9-5 away', 
-        date: new Date("2025-09-14"),  
+        date: new Date("2025-09-16"),  
         summary: 'One trade a day keeps the 9-5 away - це моє нове мотто.'
     },
 ]
