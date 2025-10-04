@@ -47,4 +47,4 @@ const DataTable: React.FC<Props> = ({ headers, filteredData, translatedMonths })
   );
 };
 
-export default DataTable;
+export default React.memo(DataTable);

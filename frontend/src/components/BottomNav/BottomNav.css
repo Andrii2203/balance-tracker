@@ -9,6 +9,8 @@
     justify-content: space-around;
     align-items: center;
     z-index: 1000;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .nav-item {

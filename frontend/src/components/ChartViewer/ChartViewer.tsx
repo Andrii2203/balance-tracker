@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useMemo } from "react";
 import { Bar } from "react-chartjs-2";
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Tooltip, Legend } from "chart.js";
 import { TransformRow } from "../../helpers/types";
-import i18n from "../../i18n";
 import { translateMonth } from "../../locales/monthTranslator/monthTranslator";
 import { useTranslation } from "react-i18next";
 import './ChartViewer.css'
@@ -10,50 +9,53 @@ import './ChartViewer.css'
 ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend);
 
 interface Props {
-    sheetName: string;
     data: TransformRow[];
 }
 
 const ChartViewer: React.FC<Props> = ({ data }) => {
-    const { t } = useTranslation();
-    const [chartKey, setChartKey] = useState<string>("initial");
+    const { t, i18n } = useTranslation();
 
-    useEffect(() => {
-        setChartKey(Date.now().toString());
-    }, [data, i18n.language])
+    const processedData = useMemo(() => {
+        const labels = data.map(row => translateMonth(row.month));
+        const actualGoalData = data.map(row => row.actualGoal);
+        const perfectGoalData = data.map(row => row.perfectGoal);
+        const actualPercentData = data.map(row => row.actualPecent);
+        const ourMoney = data.map(row => row.ourMoney);
 
-    const labels = data.map((row) => translateMonth(row.month));
-    const actualGoalData = data.map((row) => row.actualGoal);
-    const perfectGoalData = data.map((row) => row.perfectGoal);
-    const actualPecentData = data.map((row) => row.actualPecent);
-    const ourMoney = data.map((row) => row.ourMoney);
-    const maxY = ourMoney.length ? Math.max(...ourMoney) : 100;
-    const filteredData = ourMoney.filter(num => num !== 0);
-    const lastMonthMoney = filteredData.length > 0 ? filteredData[filteredData.length - 1] : 0;
-    const secondLastValue = filteredData[filteredData.length - 2];
-    const differenceFromPrevMonth = lastMonthMoney - secondLastValue;
+        const filteredMoney = ourMoney.filter(n => n !== 0);
+        const lastMonthMoney = filteredMoney.length > 0 ? filteredMoney[filteredMoney.length - 1] : 0;
+        const secondLastValue = filteredMoney.length > 1 ? filteredMoney[filteredMoney.length - 2] : 0;
+        const differenceFromPrevMonth = lastMonthMoney - secondLastValue;
+        const maxY = ourMoney.length ? Math.max(...ourMoney) : 100;
 
-    const chartConfig = {
-        labels,
+        return { labels, actualGoalData, perfectGoalData, actualPercentData, ourMoney, lastMonthMoney, secondLastValue, differenceFromPrevMonth, maxY };
+    }, [data, i18n.language]);
+
+    const ourMoneyText = useMemo(() => {
+        return`${t('ourMoney')}: $${processedData.lastMonthMoney}`;
+    }, [processedData.lastMonthMoney, t]);
+
+    const chartConfig = useMemo(() => ({
+        labels: processedData.labels,
         datasets: [
             {
                 label: t("perfectGoal"),
-                data: perfectGoalData,
+                data: processedData.perfectGoalData,
                 backgroundColor: "rgba(75, 192, 192, 0.6)",
                 borderColor: "rgba(75, 192, 192, 1)",
                 borderWidth: 1,
             },
             {
                 label: t("actualGoal"),
-                data: actualGoalData,
+                data: processedData.actualGoalData,
                 backgroundColor: "rgba(153, 102, 255, 0.6)",
                 borderColor: "rgba(153, 102, 255, 1)",
                 borderWidth: 1,
             },
         ],
-    }
+    }), [processedData, t]);
 
-    const options = {
+    const options = useMemo(() => ({
         responsive: true,
         maintainAspectRatio: true,
         aspectRatio: 1,
@@ -61,73 +63,49 @@ const ChartViewer: React.FC<Props> = ({ data }) => {
             legend: {
                 position: "bottom" as const,
                 align: 'start' as const,
-                labels: {
-                    font: {
-                        size: 13
-                    }
-                }
+                labels: { font: { size: 13 } }
             },
             tooltip: {
                 callbacks: {
-                    label: function (context: any) {
-                        const datasetLabel = context.dataset.label || '';
+                    label: (context: any) => {
                         const index = context.dataIndex;
-                        
                         if (context.dataset.label === t("perfectGoal")) {
-                            return `${datasetLabel} : $${context.raw}`;
+                            return `${context.dataset.label} : $${context.raw}`;
                         } else {
-                            const percent = actualPecentData[index];
+                            const percent = processedData.actualPercentData[index];
                             return `${t("actualGoal")} ${percent}% : $${context.raw}`;
                         }
                     }
                 }
-            },
+            }
         },
         scales: {
-            x: {
-                ticks: {
-                    font: {
-                        size: 13,
-                    }
-                }
-            },
+            x: { ticks: { font: { size: 13 } } },
             y: {
                 beginAtZero: true,
                 ticks: {
-                    font: {
-                        size: 15,
-                    },
-                    callback: function (value: number | string) {
-                        if (Number(value) === maxY) {
-                            return `🤑${value}`;
-                        }
-                        return value;
-                    },
-                    color: (ctx: { tick: { value: number } }) => {
-                        const value = ctx.tick.value;
-                        return value === maxY ? "#FF0000" : "#666";
-                    },
+                    font: { size: 15 },
+                    callback: (value: number | string) => Number(value) === processedData.maxY ? `🤑${value}` : value,
+                    color: (ctx: { tick: { value: number } }) => ctx.tick.value === processedData.maxY ? "#FF0000" : "#666",
                 },
             },
         },
-    };
+    }), [processedData, t]);
 
     return (
         <div className="chart-js-box">
-            <div style={{ 
-                minWidth: `${Math.max(perfectGoalData.length * 20, 100)}px`,
-            }}>
+            <div style={{ minWidth: `${Math.max(processedData.perfectGoalData.length * 20, 100)}px` }}>
                 <p className="amarkets-p">AMarkets</p>
-                <p className="our-money-p">{t('ourMoney')}: ${lastMonthMoney}</p>
-                <Bar key={chartKey} data={chartConfig} options={options} />
-                {differenceFromPrevMonth < 0 ? (
+                <p className="our-money-p">{ourMoneyText}</p>
+                <Bar data={chartConfig} options={options} />
+                {processedData.differenceFromPrevMonth < 0 && (
                     <p className="difference-p">
-                        {t('prevMonth')} ${secondLastValue} - {t('now').toLowerCase()} ${lastMonthMoney} = {t('ourMoney').toLowerCase()} ${differenceFromPrevMonth} {t('per').toLowerCase()} {t('month').toLowerCase()}
+                        {t('prevMonth')} ${processedData.secondLastValue} - {t('now').toLowerCase()} ${processedData.lastMonthMoney} = {t('ourMoney').toLowerCase()} ${processedData.differenceFromPrevMonth} {t('per').toLowerCase()} {t('month').toLowerCase()}
                     </p>
-                ) : null}
+                )}
             </div>
         </div>
     );
 };
 
-export default ChartViewer;
+export default React.memo(ChartViewer);
