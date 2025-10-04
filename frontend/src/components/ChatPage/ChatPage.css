@@ -2,9 +2,9 @@
 .chat-header {
   display: flex;
   align-items: center;
-  background-color: #fff;
+  /* background-color: #fff; */
   padding: 10px 15px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Більш виразна тінь */
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
   position: fixed;
   top: 0;
   left: 0;
@@ -35,13 +35,14 @@
 /* Контейнер чату */
 #chat-container {
   background-color: #fafafa;
-  padding-top: 60px; /* Щоб не заходило під шапку */
+  padding-top: 70px; /* Щоб не заходило під шапку */
   padding-bottom: 90px;
   overflow-y: auto;
   height: calc(100vh - 60px); /* Висота контейнера чату */
   display: flex;
   flex-direction: column;
   font-family: 'Inter', sans-serif;
+  scroll-padding-bottom: 100px;
 }
 
 /* Стилі для повідомлень */
@@ -50,11 +51,12 @@
   max-width: 75%;
   border-radius: 20px;
   padding: 10px 14px;
-  margin: 4px 0;
+  margin: 4px 0 4px 15px;
   word-wrap: break-word;
   position: relative;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* Легка тінь */
   opacity: 0; /* Спочатку невидиме */
+  transition: opacity 0.5s ease-in-out;
   animation: fadeIn 0.5s forwards; /* Анімація для появи */
 }
 
@@ -108,14 +110,15 @@
   display: flex;
   align-items: center;
   border-top: 1px solid #ddd;
-  background-color: #fff;
+  /* background-color: #fff; */
   position: fixed;
   bottom: 0;
   left: 0;
   width: 100%;
   padding: 12px;
   box-sizing: border-box;
-  border-radius: 30px;
+  border-top-left-radius: 30px;
+  border-top-right-radius: 30px;
   transition: bottom 0.3s ease-in-out;
 }
 
@@ -130,25 +133,30 @@
   color: #333;
   border: 1px solid #ddd;
   border-radius: 25px;
-  font-size: 14px;
+  font-size: 16px;
   outline: none;
   margin-right: 10px;
   box-sizing: border-box;
 }
 
 .send-button {
-  background-color: #0095f6;
-  color: #fff;
+  position: absolute;
+  right: 35px;
+  color: rgba(29, 20, 29, 0.667);
   border: none;
-  padding: 10px;
-  border-radius: 50%;
+  padding: 5px;
   cursor: pointer;
-  font-size: 18px;
-  transition: background-color 0.3s ease;
+  font-size: 14px;
+  background-color: transparent;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  transform: scale(1) rotate(0deg);
+  transition: transform 0.3s ease;  
+  
 }
 
-.send-button:hover {
-  background-color: #0078d4;
+.send-button:active {
+  transform: scale(1.8) rotate(-45deg);
 }
 
 /* Основний фон */
@@ -158,12 +166,16 @@ body {
 
 /* Респонсивність */
 @media (max-width: 768px) {
+  .chat-header {
+    padding: 8px 12px;
+  }
+
   .chat-header h2 {
     font-size: 16px;
   }
 
   #chat-container {
-    padding-bottom: 70px;
+    padding-bottom: 90px;
   }
 
   .message-input-container {
@@ -174,10 +186,10 @@ body {
     font-size: 16px;
   }
 
-  .send-button {
+  /* .send-button {
     padding: 12px;
     font-size: 20px;
-  }
+  } */
 }
 
 @media (max-width: 480px) {
@@ -193,9 +205,9 @@ body {
     font-size: 14px;
   }
 
-  .send-button {
+  /* .send-button {
     font-size: 22px;
-  }
+  } */
 }
 
 
