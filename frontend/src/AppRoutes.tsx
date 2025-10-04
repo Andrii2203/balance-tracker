@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 // import HomePage from "./components/HomePage/HomePage";
 import DataViewer from "./components/DataViewer/DataViewer";
 import NewsList from "./components/NewsList/NewsList";
@@ -9,6 +9,15 @@ import ChatPage from './components/ChatPage/ChatPage';
 
 const AppRoutes: React.FC<{setHideUI: (val: boolean)=>void}> = ({setHideUI}) => {
   const [userLang, setUserLang] = useState<string | null>(() => localStorage.getItem('userLang'));
+  const location = useLocation();
+
+  useEffect(() => {
+    if(location.pathname.startsWith('/chat')) {
+      setHideUI(true);
+    } else {
+      setHideUI(false);
+    }
+  }, [location.pathname, setHideUI]);
   return (
     <Routes>
       {/* <Route path="/" element={<Navigate to="/home" replace />} /> */}
