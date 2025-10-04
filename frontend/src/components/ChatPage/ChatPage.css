@@ -111,10 +111,16 @@
   background-color: #fff;
   position: fixed;
   bottom: 0;
+  left: 0;
   width: 100%;
   padding: 12px;
   box-sizing: border-box;
   border-radius: 30px;
+  transition: bottom 0.3s ease-in-out;
+}
+
+.message-input-container.active {
+    bottom: calc(50px + env(safe-area-inset-bottom));
 }
 
 .message-input {
