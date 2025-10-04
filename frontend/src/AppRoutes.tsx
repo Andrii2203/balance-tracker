@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
-import HomePage from "./components/HomePage/HomePage";
+// import HomePage from "./components/HomePage/HomePage";
 import DataViewer from "./components/DataViewer/DataViewer";
 import NewsList from "./components/NewsList/NewsList";
 import { newsData } from "./data/newsData";
-import WelcomePage from './components/WelcomePage/WelcomePage';
+// import WelcomePage from './components/WelcomePage/WelcomePage';
 import ChatPage from './components/ChatPage/ChatPage';
 
 const AppRoutes: React.FC<{setHideUI: (val: boolean)=>void}> = ({setHideUI}) => {
