@@ -1,7 +1,8 @@
 {
-    "hello": "Hello , {{name}}!",
+    "hello": "Hello, {{name}}!",
+    "hi": "Hello, ",
     "login": "Login",
-    "name_placeholder": "Enter your name",
+    "name_placeholder": "enter your name",
     "perfectGoal": "Goal 20%",
     "ourMoney": "Actual",
     "actualGoal": "Actual goal",

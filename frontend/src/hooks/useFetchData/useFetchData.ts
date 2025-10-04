@@ -1,3 +1,98 @@
+import { useEffect, useRef, useState } from "react";
+import { supabase } from "../../supabaseClient";
+
+export type Row = Record<string, any>;
+
+interface CacheData {
+  rows: Row[];
+  timestamp: number;
+}
+
+export function useFetchData(tableName: string) {
+  const [data, setData] = useState<Row[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const dataRef = useRef<Row[]>([]);
+
+  useEffect(() => {
+    const cacheKey = `supabase_cache_${tableName}`;
+    const cached = localStorage.getItem(cacheKey);
+
+    if (cached) {
+      const { rows } = JSON.parse(cached) as CacheData;
+      dataRef.current = rows;
+      setData(rows);
+      setLoading(false);
+    }
+
+    const fetchData = async () => {
+      const { data: supaData, error } = await supabase
+        .from(tableName)
+        .select("*")
+        .order("id", { ascending: true });
+
+      if (error) {
+        console.error(`Supabase fetch error (${tableName}):`, error);
+        return;
+      }
+
+      if (supaData) {
+        const newData = JSON.stringify(supaData);
+        const oldData = JSON.stringify(dataRef.current);
+
+        if (newData !== oldData) {
+          dataRef.current = supaData;
+          setData(supaData);
+          localStorage.setItem(
+            cacheKey,
+            JSON.stringify({
+              rows: supaData,
+              timestamp: Date.now(),
+            })
+          );
+        }
+      }
+
+      setLoading(false);
+    };
+
+    fetchData();
+  }, [tableName]);
+
+  return { data, loading };
+}
+
+
+
+// import { useEffect, useState } from "react";
+// import { supabase } from '../../supabaseClient';
+// export type Row = Record<string, any>;
+
+// export function useFetchData() {
+//   const [data, setData] = useState<Row[]>([]);
+//   const [loading, setLoading] = useState<boolean>(true);
+
+//   useEffect(() => {
+//     const fetchData = async () => {
+//       const { data: supaData, error } = await supabase
+//         .from("statistics")
+//         .select("*")
+//         .order('id', { ascending: true });
+        
+//         if(error) {
+//           console.error("Supabase fetch error:", error);
+//           setData([]);
+//         } else {
+//           setData(supaData || []);
+//         }
+//         setLoading(false);
+//     };
+//     fetchData();
+//   }, []);
+//   return { data, loading };
+// }
+
+
+
 // import { useEffect, useState } from "react";
 
 // export type Row = Record<string, any>;
@@ -25,32 +120,3 @@
 
 //   return { data, loading };
 // };
-
-
-import { useEffect, useState } from "react";
-import { supabase } from '../../supabaseClient';
-export type Row = Record<string, any>;
-
-export function useFetchData(sheetName: string) {
-  const [data, setData] = useState<Row[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const { data: supaData, error } = await supabase
-        .from("statistics")
-        .select("*")
-        .order('id', { ascending: true });
-        
-        if(error) {
-          console.error("Supabase fetch error:", error);
-          setData([]);
-        } else {
-          setData(supaData || []);
-        }
-        setLoading(false);
-    };
-    fetchData();
-  }, [sheetName]);
-  return { data, loading };
-}

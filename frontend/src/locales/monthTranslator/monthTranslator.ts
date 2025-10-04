@@ -22,7 +22,7 @@ export const translateMonth = (enMonth: string): string => {
     const lang = i18n.language;
     // console.log('lang', lang);
     switch (lang) {
-        case 'ua':
+        case 'uk':
             return monthsUA[index];
         case 'pl':
             return monthsPL[index];

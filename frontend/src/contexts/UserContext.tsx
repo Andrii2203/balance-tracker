@@ -11,19 +11,13 @@ interface UserContextType {
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
 export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [username, setUsername] = useState<string | null>(null);
-  const [role, setRole] = useState<Role>(null);
+  const [username, setUsername] = useState<string | null>(
+    () => localStorage.getItem('username') ?? null
+  );
+  const [role, setRole] = useState<Role>(
+    () => (localStorage.getItem('role') as Role) ?? null
+  );
 
-  useEffect(() => {
-    const savedName = localStorage.getItem("username");
-    const savedRole = localStorage.getItem("role") as Role;
-    if (savedName && savedRole) {
-      setUsername(savedName);
-      setRole(savedRole);
-    }
-  }, []);
-
-  
   const login = (name: string) => {
       const trimmed = name.trim().toLowerCase();
       
