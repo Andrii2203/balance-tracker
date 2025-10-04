@@ -11,9 +11,9 @@ const AppRoutes: React.FC<{setHideUI: (val: boolean)=>void}> = ({setHideUI}) => 
   const [userLang, setUserLang] = useState<string | null>(() => localStorage.getItem('userLang'));
   return (
     <Routes>
-      <Route path="/" element={<Navigate to="/home" replace />} />
-      <Route path="/home" element={userLang ? <HomePage setHideUI={setHideUI}/> : <Navigate to="/welcome" replace />} />
-      <Route path="/welcome" element={<WelcomePage setUserLang={setUserLang} />} />
+      {/* <Route path="/" element={<Navigate to="/home" replace />} /> */}
+      {/* <Route path="/home" element={userLang ? <HomePage setHideUI={setHideUI}/> : <Navigate to="/welcome" replace />} /> */}
+      {/* <Route path="/welcome" element={<WelcomePage setUserLang={setUserLang} />} /> */}
 
       <Route path="/charts" element={<DataViewer />} />
       <Route path="/news" element={<NewsList news={newsData}/>} />
