@@ -148,18 +148,18 @@ const ChatPage: React.FC = () => {
     if (div) div.scrollTop = div.scrollHeight;
   }, [messages]);
 
-  useEffect(() => {
-    const inputContainer = document.querySelector(".message-input-container") as HTMLElement;
-    if(!inputContainer) return;
+  // useEffect(() => {
+  //   const inputContainer = document.querySelector(".message-input-container") as HTMLElement;
+  //   if(!inputContainer) return;
 
-    const handleResize = () => {
-      const viewportHeight = window.visualViewport?.height || window.innerHeight;
-      inputContainer.style.bottom = `${window.innerHeight - viewportHeight}px`;
-    };
+  //   const handleResize = () => {
+  //     const viewportHeight = window.visualViewport?.height || window.innerHeight;
+  //     inputContainer.style.bottom = `${window.innerHeight - viewportHeight}px`;
+  //   };
 
-    window.visualViewport?.addEventListener('resize', handleResize);
-    return () => window.visualViewport?.removeEventListener('resize', handleResize);
-  }, []);
+  //   window.visualViewport?.addEventListener('resize', handleResize);
+  //   return () => window.visualViewport?.removeEventListener('resize', handleResize);
+  // }, []);
 
   const handleBack = () => {
     navigate(-1);
