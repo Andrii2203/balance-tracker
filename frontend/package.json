@@ -16,6 +16,7 @@
     "axios": "^1.10.0",
     "chart.js": "^4.5.0",
     "dotenv": "^16.5.0",
+    "framer-motion": "^12.23.13",
     "googleapis": "^150.0.1",
     "i18next": "^23.4.6",
     "i18next-browser-languagedetector": "^8.2.0",
