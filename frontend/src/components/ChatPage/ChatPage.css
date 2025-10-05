@@ -1,7 +1,10 @@
 html, body {
   height: 100%;
-  /* overflow: hidden; */
+  margin: 0;
+  padding: 0;
   background-color: #fafafa;
+  -webkit-tap-highlight-color: transparent;
+  overflow: hidden;
 }
 .chat-header {
   position: fixed;
@@ -46,7 +49,7 @@ html, body {
 
 #chat-container {
   background-color: #fafafa;
-  padding-top: 70px;
+  margin-top: 70px;
   padding-bottom: 75px;
   overflow-y: auto;
   height: 100%;
@@ -54,7 +57,7 @@ html, body {
   scroll-behavior: smooth;
   box-sizing: border-box;
   flex-direction: column;
-  flex-grow: 1;
+  flex: 1;
   transition: height 0.2s ease-in-out;
   font-family: 'Inter', sans-serif;
   overflow-y: auto;
@@ -141,6 +144,7 @@ html, body {
 }
 
 .message-input {
+  display: flex;
   flex: 1;
   padding: 12px;
   background-color: rgba(255, 255, 255, 0.85);

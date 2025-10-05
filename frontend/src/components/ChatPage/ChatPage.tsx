@@ -153,54 +153,28 @@ const ChatPage: React.FC = () => {
   const chatRef = useRef<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLDivElement | null>(null);
 
-  useEffect(() => {
-    const inputContainer = inputRef.current;
-    if (!inputContainer) return;
+ useEffect(() => {
+  const inputContainer = inputRef.current;
+  if (!inputContainer || !window.visualViewport) return;
 
-    const handleFocus = () => {
-      // Коли клавіатура з’явилась
-      setTimeout(() => {
-        inputContainer.style.position = 'absolute';
-        inputContainer.style.bottom = `${window.innerHeight - document.documentElement.clientHeight}px`;
-        inputContainer.scrollIntoView({ behavior: 'smooth', block: 'end' });
-      }, 100);
-    };
+  const viewport = window.visualViewport;
 
-    const handleBlur = () => {
-      // Коли клавіатура зникла
-      inputContainer.style.position = 'fixed';
-      inputContainer.style.bottom = '0';
-    };
+  const updateInputPosition = () => {
+    const offsetBottom = window.innerHeight - (viewport.height + viewport.offsetTop);
+    inputContainer.style.transform = `translateY(-${offsetBottom}px)`;
+  };
 
-    const inputEl = inputContainer.querySelector('input');
-    inputEl?.addEventListener('focus', handleFocus);
-    inputEl?.addEventListener('blur', handleBlur);
+  viewport.addEventListener("resize", updateInputPosition);
+  viewport.addEventListener("scroll", updateInputPosition);
 
-    return () => {
-      inputEl?.removeEventListener('focus', handleFocus);
-      inputEl?.removeEventListener('blur', handleBlur);
-    };
-  }, []);
+  updateInputPosition();
 
-  useEffect(() => {
-    const inputContainer = inputRef.current;
-    if (!inputContainer || !window.visualViewport) return;
+  return () => {
+    viewport.removeEventListener("resize", updateInputPosition);
+    viewport.removeEventListener("scroll", updateInputPosition);
+  };
+}, []);
 
-    const viewport = window.visualViewport;
-
-    const adjustForKeyboard = () => {
-      const keyboardHeight = window.innerHeight - viewport.height - viewport.offsetTop;
-      inputContainer.style.bottom = `${keyboardHeight}px`;
-    };
-
-    viewport.addEventListener('resize', adjustForKeyboard);
-    viewport.addEventListener('scroll', adjustForKeyboard);
-
-    return () => {
-      viewport.removeEventListener('resize', adjustForKeyboard);
-      viewport.removeEventListener('scroll', adjustForKeyboard);
-    };
-  }, []);
 
 
 
