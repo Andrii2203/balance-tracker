@@ -161,29 +161,48 @@ const ChatPage: React.FC = () => {
     if (div) div.scrollTop = div.scrollHeight;
   }, [messages]);
 
-  useEffect(() => {
-    const chatContainer = document.getElementById("chat-container");
-    const inputContainer = document.querySelector(".message-input-container") as HTMLElement | null;
+useEffect(() => {
+  const inputContainer = document.querySelector(
+    ".message-input-container"
+  ) as HTMLElement | null;
+  const chatContainer = document.getElementById("chat-container");
 
-    // Якщо не знайдено елементи — вихід
-    if (!chatContainer || !inputContainer) return;
+  if (!inputContainer || !chatContainer) return;
 
-    // Перевіряємо чи підтримується visualViewport
-    const vv = window.visualViewport;
+  const vv = window.visualViewport;
+
+  // 🔹 Функція оновлення позиції поля вводу
+  const updatePosition = () => {
     if (!vv) return;
 
-    const handleResize = () => {
-      const viewportHeight = vv.height || window.innerHeight;
-      chatContainer.style.height = `${viewportHeight - inputContainer.offsetHeight}px`;
-    };
+    const keyboardHeight = window.innerHeight - vv.height;
+    const bottomOffset = keyboardHeight > 0 ? keyboardHeight : 0;
 
-    vv.addEventListener("resize", handleResize);
-    handleResize(); // Викликаємо одразу
+    // зсуваємо контейнер вводу рівно над клавіатурою
+    inputContainer.style.bottom = `${bottomOffset}px`;
 
-    return () => {
-      vv.removeEventListener("resize", handleResize);
-    };
-  }, []);
+    // динамічно підганяємо висоту чату, щоб він не ховався
+    chatContainer.style.height = `calc(${vv.height}px - ${inputContainer.offsetHeight}px)`;
+    chatContainer.scrollTop = chatContainer.scrollHeight;
+  };
+
+  if (vv) {
+    vv.addEventListener("resize", updatePosition);
+    vv.addEventListener("scroll", updatePosition);
+  }
+
+  // одразу викликаємо
+  updatePosition();
+
+  // 🧹 прибираємо слухачі при розмонтуванні
+  return () => {
+    if (vv) {
+      vv.removeEventListener("resize", updatePosition);
+      vv.removeEventListener("scroll", updatePosition);
+    }
+  };
+}, []);
+
 
 
   const handleBack = () => {

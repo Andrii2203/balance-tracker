@@ -105,11 +105,12 @@
 }
 
 .message-input-container {
-  display: flex;
-  align-items: center;
+  /* display: flex;
+  align-items: center; */
   border-top: 1px solid #ddd;
   position: fixed;
-  bottom: 0;
+  /* bottom: calc(50px + env(safe-area-inset-bottom)); */
+  /* bottom: 0; */
   left: 0;
   width: 100%;
   padding: 12px;
@@ -159,7 +160,7 @@
 body {
   background-color: #fafafa;
 }
-
+/* 
 @media (max-width: 768px) {
   .chat-header {
     padding: 8px 12px;
@@ -196,4 +197,4 @@ body {
     font-size: 14px;
   }
 
-}
+} */
