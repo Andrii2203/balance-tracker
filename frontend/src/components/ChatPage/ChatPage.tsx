@@ -153,27 +153,44 @@ const ChatPage: React.FC = () => {
   const chatRef = useRef<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLDivElement | null>(null);
 
- useEffect(() => {
-  const inputContainer = inputRef.current;
-  if (!inputContainer || !window.visualViewport) return;
+  useEffect(() => {
+    const inputContainer = inputRef.current;
+    if (!inputContainer || !window.visualViewport) return;
 
-  const viewport = window.visualViewport;
+    const viewport = window.visualViewport;
 
-  const updateInputPosition = () => {
-    const offsetBottom = window.innerHeight - (viewport.height + viewport.offsetTop);
-    inputContainer.style.transform = `translateY(-${offsetBottom}px)`;
-  };
+    let lastOffset = 0;
+    let animFrame: number | null = null;
 
-  viewport.addEventListener("resize", updateInputPosition);
-  viewport.addEventListener("scroll", updateInputPosition);
+    const updateInputPosition = () => {
+      const offsetBottom =
+        window.innerHeight - (viewport.height + viewport.offsetTop);
 
-  updateInputPosition();
+      if (Math.abs(offsetBottom - lastOffset) < 1) return;
+      lastOffset = offsetBottom;
 
-  return () => {
-    viewport.removeEventListener("resize", updateInputPosition);
-    viewport.removeEventListener("scroll", updateInputPosition);
-  };
-}, []);
+      if (animFrame) cancelAnimationFrame(animFrame);
+      animFrame = requestAnimationFrame(() => {
+        inputContainer.style.transform = `translate3d(0, -${offsetBottom}px, 0)`;
+      });
+    };
+
+    const chat = chatRef.current;
+    if (chat) {
+      chat.scrollTo({ top: chat.scrollHeight, behavior: "smooth" });
+    }
+
+
+    viewport.addEventListener("resize", updateInputPosition);
+    viewport.addEventListener("scroll", updateInputPosition);
+    updateInputPosition();
+
+    return () => {
+      viewport.removeEventListener("resize", updateInputPosition);
+      viewport.removeEventListener("scroll", updateInputPosition);
+      if (animFrame) cancelAnimationFrame(animFrame);
+    };
+  }, []);
 
 
 
