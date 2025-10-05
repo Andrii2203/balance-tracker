@@ -32,14 +32,15 @@
 
 #chat-container {
   background-color: #fafafa;
-  padding-top: 70px;
-  padding-bottom: 90px;
+  padding-top: 80px;
+  padding-bottom: 80px;
   overflow-y: auto;
-  /* height: calc(100vh - 60px); */
+  height: 100vh;
   display: flex;
+  scroll-behavior: smooth;
+  box-sizing: border-box;
   flex-direction: column;
   font-family: 'Inter', sans-serif;
-  scroll-padding-bottom: 100px;
 }
 
 .message {
