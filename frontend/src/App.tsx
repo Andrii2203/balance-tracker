@@ -11,15 +11,12 @@ const AppContent = () => {
   const [hideUI, setHideUI] = useState<boolean>(false);
 
   return (
-    <div className="app-content-container">
-      <div className="app-content-container-app-routes">
-        <AppRoutes setHideUI={setHideUI} />
-      </div>
-      
+    <>
+      <AppRoutes setHideUI={setHideUI} />
       {username && !hideUI && (
         <BottomNav items={navItems} />
       )}
-    </div>
+    </>
   )
 }
 

@@ -157,9 +157,21 @@ const ChatPage: React.FC = () => {
     <div>
       <div className="chat-header">
         <button className="back-btn" onClick={handleBack}>
-          &#8592;
+          ➤
         </button>
         <h2>Chat {online ? "🟢" : "🔴 (Offline mode)"}</h2>
+        {/* <svg style={{ position: "absolute", width: 0, height: 0 }}>
+          <filter id="lens-distort">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="1" result="blur" />
+            <feDisplacementMap
+              in="blur"
+              in2="blur"
+              scale="80"
+              xChannelSelector="R"
+              yChannelSelector="G"
+            />
+          </filter>
+        </svg> */}
       </div>
 
       <div id="chat-container">
