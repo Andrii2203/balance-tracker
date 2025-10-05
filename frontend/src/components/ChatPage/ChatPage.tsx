@@ -83,16 +83,16 @@ const ChatPage: React.FC = () => {
   }, []);
 
   // 🧭 Слухаємо зміни висоти екрану (для клавіатури)
-  useEffect(() => {
-    const handleResize = () => {
-      const isKeyboardOpen = window.innerHeight < document.documentElement.clientHeight;
-      setIsKeyboardVisible(isKeyboardOpen);
-    };
+  // useEffect(() => {
+  //   const handleResize = () => {
+  //     const viewport = window.visualViewport;
+  //     if (!viewport) return;
+  //     setIsKeyboardVisible(viewport.height < window.innerHeight - 100);
+  //   };
+  //   window.visualViewport?.addEventListener('resize', handleResize);
+  //   return () => window.visualViewport?.removeEventListener('resize', handleResize);
+  // }, []);
 
-    window.addEventListener("resize", handleResize);
-
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
 
   // ✉️ Надсилання нового повідомлення
   const sendMessage = async () => {
