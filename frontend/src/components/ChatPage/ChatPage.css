@@ -2,7 +2,7 @@ html, body {
   background-color: #fafafa;
 }
 .chat-header {
-  position: fixed;
+  position: sticky;
   display: flex;
   align-items: center;
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
@@ -121,7 +121,7 @@ html, body {
   display: flex;
   align-items: center;
   border-top: 1px solid #ddd;
-  position: fixed;
+  position: sticky;
   bottom: 0;
   left: 0;
   height: 70px;
@@ -132,6 +132,7 @@ html, body {
   border-top-left-radius: 30px;
   border-top-right-radius: 30px;
   /* transition: bottom 0.3s ease-in-out; */
+  z-index: 10;
 }
 
 .message-input {
