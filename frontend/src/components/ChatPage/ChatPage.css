@@ -1,10 +1,5 @@
 html, body {
-  height: 100%;
-  margin: 0;
-  padding: 0;
   background-color: #fafafa;
-  -webkit-tap-highlight-color: transparent;
-  /* overscroll-behavior: contain; */
 }
 .chat-header {
   position: fixed;
@@ -52,16 +47,15 @@ html, body {
   margin-top: 70px;
   padding-bottom: 75px;
   overflow-y: auto;
-  height: 100vh;
+  /* height: 100vh; */
   display: flex;
   scroll-behavior: smooth;
   box-sizing: border-box;
   flex-direction: column;
-  flex: 1;
+  flex-grow: 1;
   transition: height 0.2s ease-in-out;
   font-family: 'Inter', sans-serif;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
+  /* -webkit-overflow-scrolling: touch; */
 }
 
 .message {
@@ -133,21 +127,15 @@ html, body {
   height: 70px;
   width: 100%;
   margin: 0;
-  /* padding: 0; */
   padding: 12px;
   box-sizing: border-box;
-  /* border-radius: 30px; */
   border-top-left-radius: 30px;
   border-top-right-radius: 30px;
   /* transition: bottom 0.3s ease-in-out; */
-  z-index: 20;
-  /* transition: transform 0.25s ease-in-out; */
-  /* will-change: transform; */
-  /* backface-visibility: hidden; */
 }
 
 .message-input {
-  display: flex;
+  /* display: flex; */
   flex: 1;
   padding: 12px;
   background-color: rgba(255, 255, 255, 0.85);
@@ -159,7 +147,6 @@ html, body {
   box-sizing: border-box;
   backdrop-filter: blur(1px) saturate(180%);
   margin: 0;
-  /* width: 90%; */
 }
 
 .send-button {
