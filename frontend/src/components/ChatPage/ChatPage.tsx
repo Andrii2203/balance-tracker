@@ -161,6 +161,31 @@ const ChatPage: React.FC = () => {
     if (div) div.scrollTop = div.scrollHeight;
   }, [messages]);
 
+  useEffect(() => {
+    const chatContainer = document.getElementById("chat-container");
+    const inputContainer = document.querySelector(".message-input-container") as HTMLElement | null;
+
+    // Якщо не знайдено елементи — вихід
+    if (!chatContainer || !inputContainer) return;
+
+    // Перевіряємо чи підтримується visualViewport
+    const vv = window.visualViewport;
+    if (!vv) return;
+
+    const handleResize = () => {
+      const viewportHeight = vv.height || window.innerHeight;
+      chatContainer.style.height = `${viewportHeight - inputContainer.offsetHeight}px`;
+    };
+
+    vv.addEventListener("resize", handleResize);
+    handleResize(); // Викликаємо одразу
+
+    return () => {
+      vv.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
+
   const handleBack = () => {
     navigate(-1);
   }
