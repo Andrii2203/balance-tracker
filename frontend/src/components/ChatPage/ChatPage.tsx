@@ -154,45 +154,45 @@ const ChatPage: React.FC = () => {
   const inputRef = useRef<HTMLDivElement | null>(null);
 
   // 🟢 1. Це твій effect — лишаєш як є
-  useEffect(() => {
-    const inputContainer = inputRef.current;
-    if (!inputContainer || !window.visualViewport) return;
+  // useEffect(() => {
+  //   const inputContainer = inputRef.current;
+  //   if (!inputContainer || !window.visualViewport) return;
 
-    const viewport = window.visualViewport;
-    let lastOffset = 0;
-    let animFrame: number | null = null;
+  //   const viewport = window.visualViewport;
+  //   let lastOffset = 0;
+  //   let animFrame: number | null = null;
 
-    const updateInputPosition = () => {
-      const offsetBottom = window.innerHeight - (viewport.height + viewport.offsetTop);
-      if (Math.abs(offsetBottom - lastOffset) < 1) return;
-      lastOffset = offsetBottom;
-      if (animFrame) cancelAnimationFrame(animFrame);
-      animFrame = requestAnimationFrame(() => {
-        inputContainer.style.transform = `translate3d(0, -${offsetBottom}px, 0)`;
-      });
-    };
+  //   const updateInputPosition = () => {
+  //     const offsetBottom = window.innerHeight - (viewport.height + viewport.offsetTop);
+  //     if (Math.abs(offsetBottom - lastOffset) < 1) return;
+  //     lastOffset = offsetBottom;
+  //     if (animFrame) cancelAnimationFrame(animFrame);
+  //     animFrame = requestAnimationFrame(() => {
+  //       inputContainer.style.transform = `translate3d(0, -${offsetBottom}px, 0)`;
+  //     });
+  //   };
 
-    viewport.addEventListener("resize", updateInputPosition);
-    viewport.addEventListener("scroll", updateInputPosition);
-    updateInputPosition();
+  //   viewport.addEventListener("resize", updateInputPosition);
+  //   viewport.addEventListener("scroll", updateInputPosition);
+  //   updateInputPosition();
 
-    return () => {
-      viewport.removeEventListener("resize", updateInputPosition);
-      viewport.removeEventListener("scroll", updateInputPosition);
-      if (animFrame) cancelAnimationFrame(animFrame);
-    };
-  }, []);
+  //   return () => {
+  //     viewport.removeEventListener("resize", updateInputPosition);
+  //     viewport.removeEventListener("scroll", updateInputPosition);
+  //     if (animFrame) cancelAnimationFrame(animFrame);
+  //   };
+  // }, []);
 
   // 🟣 2. Це додатковий effect — додає стабільність header’у
-  useEffect(() => {
-    const updateHeight = () => {
-      const vh = window.innerHeight * 0.01;
-      document.documentElement.style.setProperty("--vh", `${vh}px`);
-    };
-    updateHeight();
-    window.addEventListener("resize", updateHeight);
-    return () => window.removeEventListener("resize", updateHeight);
-  }, []);
+  // useEffect(() => {
+  //   const updateHeight = () => {
+  //     const vh = window.innerHeight * 0.01;
+  //     document.documentElement.style.setProperty("--vh", `${vh}px`);
+  //   };
+  //   updateHeight();
+  //   window.addEventListener("resize", updateHeight);
+  //   return () => window.removeEventListener("resize", updateHeight);
+  // }, []);
 
 
 
