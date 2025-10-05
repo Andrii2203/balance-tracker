@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { supabase } from "../../supabaseClient";
 import { useNavigate } from 'react-router-dom';
 import "./ChatPage.css";
@@ -149,13 +149,73 @@ const ChatPage: React.FC = () => {
     if (div) div.scrollTop = div.scrollHeight;
   }, [messages]);
 
+  const chatHeaderRef = useRef<HTMLDivElement | null>(null);
+  const chatRef = useRef<HTMLDivElement | null>(null);
+  const inputRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const inputContainer = inputRef.current;
+    if (!inputContainer) return;
+
+    const handleFocus = () => {
+      // Коли клавіатура з’явилась
+      setTimeout(() => {
+        inputContainer.style.position = 'absolute';
+        inputContainer.style.bottom = `${window.innerHeight - document.documentElement.clientHeight}px`;
+        inputContainer.scrollIntoView({ behavior: 'smooth', block: 'end' });
+      }, 100);
+    };
+
+    const handleBlur = () => {
+      // Коли клавіатура зникла
+      inputContainer.style.position = 'fixed';
+      inputContainer.style.bottom = '0';
+    };
+
+    const inputEl = inputContainer.querySelector('input');
+    inputEl?.addEventListener('focus', handleFocus);
+    inputEl?.addEventListener('blur', handleBlur);
+
+    return () => {
+      inputEl?.removeEventListener('focus', handleFocus);
+      inputEl?.removeEventListener('blur', handleBlur);
+    };
+  }, []);
+
+  useEffect(() => {
+    const inputContainer = inputRef.current;
+    if (!inputContainer || !window.visualViewport) return;
+
+    const viewport = window.visualViewport;
+
+    const adjustForKeyboard = () => {
+      const keyboardHeight = window.innerHeight - viewport.height - viewport.offsetTop;
+      inputContainer.style.bottom = `${keyboardHeight}px`;
+    };
+
+    viewport.addEventListener('resize', adjustForKeyboard);
+    viewport.addEventListener('scroll', adjustForKeyboard);
+
+    return () => {
+      viewport.removeEventListener('resize', adjustForKeyboard);
+      viewport.removeEventListener('scroll', adjustForKeyboard);
+    };
+  }, []);
+
+
+
   const handleBack = () => {
     navigate(-1);
   }
 
+
+
   return (
     <div>
-      <div className="chat-header">
+      <div 
+        className="chat-header" 
+        ref={chatHeaderRef} 
+      >
         <button className="back-btn" onClick={handleBack}>
           ➤
         </button>
@@ -174,7 +234,10 @@ const ChatPage: React.FC = () => {
         </svg> */}
       </div>
 
-      <div id="chat-container">
+      <div 
+        id="chat-container" 
+        ref={chatRef} 
+      >
         {messages.map((msg, i) => (
           <div key={i}>
             <div
@@ -202,7 +265,10 @@ const ChatPage: React.FC = () => {
         ))}
       </div>
 
-      <div className="message-input-container">
+      <div 
+        className="message-input-container" 
+        ref={inputRef}
+      >
         <input
           value={newMessage}
           onChange={(e) => setNewMessage(e.target.value)}
