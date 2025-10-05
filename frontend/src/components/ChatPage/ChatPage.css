@@ -4,7 +4,7 @@ html, body {
   padding: 0;
   background-color: #fafafa;
   -webkit-tap-highlight-color: transparent;
-  overscroll-behavior: contain;
+  /* overscroll-behavior: contain; */
 }
 .chat-header {
   position: fixed;
@@ -141,9 +141,9 @@ html, body {
   border-top-right-radius: 30px;
   /* transition: bottom 0.3s ease-in-out; */
   z-index: 20;
-  transition: transform 0.25s ease-in-out;
-  will-change: transform;
-  backface-visibility: hidden;
+  /* transition: transform 0.25s ease-in-out; */
+  /* will-change: transform; */
+  /* backface-visibility: hidden; */
 }
 
 .message-input {
