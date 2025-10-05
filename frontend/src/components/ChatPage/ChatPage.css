@@ -4,7 +4,6 @@ html, body {
   padding: 0;
   background-color: #fafafa;
   -webkit-tap-highlight-color: transparent;
-  overflow: hidden;
 }
 .chat-header {
   position: fixed;
