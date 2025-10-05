@@ -153,44 +153,46 @@ const ChatPage: React.FC = () => {
   const chatRef = useRef<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLDivElement | null>(null);
 
-  // useEffect(() => {
-  //   const inputContainer = inputRef.current;
-  //   if (!inputContainer || !window.visualViewport) return;
+  // 🟢 1. Це твій effect — лишаєш як є
+  useEffect(() => {
+    const inputContainer = inputRef.current;
+    if (!inputContainer || !window.visualViewport) return;
 
-  //   const viewport = window.visualViewport;
+    const viewport = window.visualViewport;
+    let lastOffset = 0;
+    let animFrame: number | null = null;
 
-  //   let lastOffset = 0;
-  //   let animFrame: number | null = null;
+    const updateInputPosition = () => {
+      const offsetBottom = window.innerHeight - (viewport.height + viewport.offsetTop);
+      if (Math.abs(offsetBottom - lastOffset) < 1) return;
+      lastOffset = offsetBottom;
+      if (animFrame) cancelAnimationFrame(animFrame);
+      animFrame = requestAnimationFrame(() => {
+        inputContainer.style.transform = `translate3d(0, -${offsetBottom}px, 0)`;
+      });
+    };
 
-  //   const updateInputPosition = () => {
-  //     const offsetBottom =
-  //       window.innerHeight - (viewport.height + viewport.offsetTop);
+    viewport.addEventListener("resize", updateInputPosition);
+    viewport.addEventListener("scroll", updateInputPosition);
+    updateInputPosition();
 
-  //     if (Math.abs(offsetBottom - lastOffset) < 1) return;
-  //     lastOffset = offsetBottom;
+    return () => {
+      viewport.removeEventListener("resize", updateInputPosition);
+      viewport.removeEventListener("scroll", updateInputPosition);
+      if (animFrame) cancelAnimationFrame(animFrame);
+    };
+  }, []);
 
-  //     if (animFrame) cancelAnimationFrame(animFrame);
-  //     animFrame = requestAnimationFrame(() => {
-  //       inputContainer.style.transform = `translate3d(0, -${offsetBottom}px, 0)`;
-  //     });
-  //   };
-
-  //   const chat = chatRef.current;
-  //   if (chat) {
-  //     chat.scrollTo({ top: chat.scrollHeight, behavior: "smooth" });
-  //   }
-
-
-  //   viewport.addEventListener("resize", updateInputPosition);
-  //   viewport.addEventListener("scroll", updateInputPosition);
-  //   updateInputPosition();
-
-  //   return () => {
-  //     viewport.removeEventListener("resize", updateInputPosition);
-  //     viewport.removeEventListener("scroll", updateInputPosition);
-  //     if (animFrame) cancelAnimationFrame(animFrame);
-  //   };
-  // }, []);
+  // 🟣 2. Це додатковий effect — додає стабільність header’у
+  useEffect(() => {
+    const updateHeight = () => {
+      const vh = window.innerHeight * 0.01;
+      document.documentElement.style.setProperty("--vh", `${vh}px`);
+    };
+    updateHeight();
+    window.addEventListener("resize", updateHeight);
+    return () => window.removeEventListener("resize", updateHeight);
+  }, []);
 
 
 
@@ -205,7 +207,7 @@ const ChatPage: React.FC = () => {
     <div>
       <div 
         className="chat-header" 
-        // ref={chatHeaderRef} 
+        ref={chatHeaderRef} 
       >
         <button className="back-btn" onClick={handleBack}>
           ➤
@@ -227,7 +229,7 @@ const ChatPage: React.FC = () => {
 
       <div 
         id="chat-container" 
-        // ref={chatRef} 
+        ref={chatRef} 
       >
         {messages.map((msg, i) => (
           <div key={i}>
@@ -258,7 +260,7 @@ const ChatPage: React.FC = () => {
 
       <div 
         className="message-input-container" 
-        // ref={inputRef}
+        ref={inputRef}
       >
         <input
           value={newMessage}
