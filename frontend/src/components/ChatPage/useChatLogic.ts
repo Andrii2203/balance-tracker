@@ -13,7 +13,6 @@ export const useChatLogic = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState("");
   const [online, setOnline] = useState<boolean>(navigator.onLine);
-  const [scrollY, setScrollY] = useState(0);
 
   // 🟢 Завантаження повідомлень (із кешу або Supabase)
   useEffect(() => {
@@ -141,24 +140,6 @@ export const useChatLogic = () => {
     localStorage.setItem("pending_msgs", JSON.stringify(filtered));
   };
 
-  // 📜 Автопрокрутка вниз
-  useEffect(() => {
-    const div = document.getElementById("chat-container");
-    if (div) div.scrollTop = div.scrollHeight;
-  }, [messages]);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrollY(window.scrollY);
-    };
-    window.addEventListener('scroll', handleScroll);
-
-    // Cleanup
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, []);
-
   return {
     messages,
     newMessage,
@@ -166,6 +147,5 @@ export const useChatLogic = () => {
     sendMessage,
     resendMessage,
     online,
-    scrollY,
   };
 };
