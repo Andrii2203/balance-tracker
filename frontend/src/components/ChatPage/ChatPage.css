@@ -264,7 +264,7 @@ html, body {
 .message-input {
   display: flex;
   flex: 1;
-  padding: 12px;
+  padding: 12px 42px 12px 12px ;
   background-color: rgba(255, 255, 255, 0.85);
   color: #333;
   border: 1px solid #ddd;
