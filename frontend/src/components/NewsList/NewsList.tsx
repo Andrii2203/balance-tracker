@@ -1,4 +1,5 @@
 import React from "react";
+import './NewsList.css';
 
 interface NewsItem {
     id: number;
@@ -13,7 +14,7 @@ interface NewsListProps {
 
 const NewsList: React.FC<NewsListProps> = ({ news }) => {
     return (
-        <div>
+        <div className="new-list-container">
             {news.length === 0 ? (
                 <p>No news available</p>
             ) : (
