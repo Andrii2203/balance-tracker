@@ -13,12 +13,12 @@ const AppContent = () => {
   return (
     <>
       <AppRoutes setHideUI={setHideUI} />
-      {/* {!hideUI && (
-        <BottomNav items={navItems} />
-      )} */}
-      {username && !hideUI && (
+      {!hideUI && (
         <BottomNav items={navItems} />
       )}
+      {/* {username && !hideUI && (
+        <BottomNav items={navItems} />
+      )} */}
     </>
   )
 }
