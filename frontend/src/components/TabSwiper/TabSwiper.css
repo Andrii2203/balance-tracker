@@ -1,0 +1,26 @@
+.tab-swiper-select-wrapper {
+  position: fixed;
+  top: 3%;
+  right: 0%;
+  transform: translate(-50%, -50%);
+  display: inline-block;
+  margin: 0;
+  padding: 0;
+  background-color: transparent;
+  z-index: 50;
+}
+
+.tab-swiper-select,
+.tab-swiper-option,
+.tab-swiper-select:hover,
+.tab-swiper-option:hover,
+.tab-swiper-select:focus,
+.tab-swiper-option:focus {
+  background-color: transparent;
+  padding: 0;
+  margin: 0;
+  font-size: 11px;
+  outline: none;
+  border: none;
+}
+

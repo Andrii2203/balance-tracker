@@ -1,0 +1,127 @@
+:root {
+  --shared-font-size: 1.2rem;
+  --shared-line-height: 1.8rem;
+  --shared-font-weight: 700;
+  --shared-color: #333;
+  --button-bg: transparent;
+  --button-color: black;
+  --button-radius: 6px;
+  --button-padding: 0 0.5rem;
+}
+
+.home-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+.home-page-nav {
+  display: flex;
+  justify-content: space-between;
+}
+.login-panel-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+.close-login-panel {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  font-size: 1.5rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+.settings-button {
+  font-size: 1.5rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+.toggle-settigs-btn {
+    font-size: 1.5rem;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    outline: none;
+    box-shadow: none;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+.shared-h1 {
+  font-size: var(--shared-font-size);
+  font-weight: var(--shared-font-weight);
+  color: var(--shared-color);
+  margin: 0;
+  line-height: var(--shared-line-height);
+  vertical-align: middle;
+}
+
+.shared-input {
+  padding: 0;                   /* прибираємо вертикальний padding */
+  font-size: var(--shared-font-size);
+  color: var(--shared-color);
+  font-weight: var(--shared-font-weight);
+  border: none;
+  border-bottom: 1px solid #ccc;
+  outline: none;
+  background: transparent;
+  line-height: var(--shared-line-height);
+  vertical-align: middle;
+  flex: 1 1 auto;
+  min-width: 0;
+  max-width: 50%;
+  letter-spacing: normal;
+}
+
+.shared-input::placeholder {
+  color: var(--shared-color);
+  opacity: 0.5;
+  font-size: var(--shared-font-size);
+  font-weight: var(--shared-font-weight);
+  margin: 0;
+  padding: 0;
+}
+
+.shared-button {
+  padding: var(--button-padding);
+  font-size: var(--shared-font-size);
+  border-radius: var(--button-radius);
+  border: none;
+  background-color: var(--button-bg);
+  color: var(--button-color);
+  cursor: pointer;
+  margin-left: 0.5rem;
+  line-height: var(--shared-line-height);
+  vertical-align: middle;
+  outline: none;
+  box-shadow: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.login-panel {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  flex-wrap: nowrap;
+  box-sizing: border-box;
+  width: 100%;
+}
+.settings-toggle {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  cursor: pointer;
+  font-size: 1.5rem;
+  z-index: 999;
+}
+
+.home-container.hidden-mode {
+  background: #f8f8f8;
+}

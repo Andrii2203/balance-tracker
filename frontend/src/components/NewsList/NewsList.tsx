@@ -1,39 +1,40 @@
-import React from "react";
-import './NewsList.css';
+import React, { useEffect } from "react";
+import { useNews } from "../../hooks/useRealtimeTable/useNews";
+import "./NewsList.css";
 
-interface NewsItem {
-    id: number;
-    date: Date;
-    title: string;
-    summary: string;
-}
+const NewsList: React.FC = () => {
+  const { data: news, loading, error } = useNews();
 
-interface NewsListProps {
-    news: NewsItem[];
-}
+  // Логи для дебага
+  useEffect(() => {
+    console.log("💬 NEWS DATA:", news);
+    console.log("💬 LOADING:", loading);
+    console.log("💬 ERROR:", error);
+  }, [news, loading, error]);
 
-const NewsList: React.FC<NewsListProps> = ({ news }) => {
-    return (
-        <div className="new-list-container">
-            {news.length === 0 ? (
-                <p>No news available</p>
-            ) : (
-                <ul>
-                    {news.map(item => (
-                        <li key={item.id}>
-                            <h3>{item.title}</h3>
-                            <span>{item.date.toLocaleDateString('uk-UA', {
-                                year: 'numeric',
-                                month: 'long',
-                                day: 'numeric'
-                            })}</span>
-                            <p>{item.summary}</p>
-                        </li>
-                    ))}
-                </ul>
-            )}
-        </div>
-    )
-}
+  if (loading) return <div className="news-container"><p>Loading news...</p></div>;
+  
+  if (error) return <div className="news-container"><p style={{ color: "red" }}>Error: {error}</p></div>;
+
+  return (
+    <div className="news-container">
+      <h2>💬 News</h2>
+      
+      {news.length === 0 ? (
+        <p>No news available yet</p>
+      ) : (
+        <ul className="news-list">
+          {news.map((n) => (
+            <li key={n.id} className="news-item">
+              <p className="news-text">"{n.title}"</p>
+              <p className="news-author">— {n.summary}</p>
+              <p className="news-time">— {n.date}</p>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+};
 
 export default NewsList;

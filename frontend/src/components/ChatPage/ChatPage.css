@@ -1,6 +1,7 @@
 html, body {
   background-color: #fafafa;
 }
+
 .chat-header {
   position: fixed;
   display: flex;
@@ -112,6 +113,7 @@ html, body {
   flex-grow: 1;
   transition: height 0.2s ease-in-out;
   font-family: 'Inter', sans-serif;
+  width: 100%;
 }
 .message-magnified-content {
   width: 100%;
