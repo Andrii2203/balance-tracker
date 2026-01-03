@@ -1,0 +1,38 @@
+.skeleton-base {
+    background: var(--skeleton-bg, rgba(255, 255, 255, 0.05));
+    position: relative;
+    overflow: hidden;
+    min-height: 1em;
+}
+
+.skeleton-base::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg,
+            transparent,
+            var(--skeleton-shimmer, rgba(255, 255, 255, 0.08)),
+            transparent);
+    animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+    0% {
+        transform: translateX(-100%);
+    }
+
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+/* Specific variants */
+.skeleton-card {
+    border-radius: var(--radius-xl, 12px);
+    padding: 16px;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+}
