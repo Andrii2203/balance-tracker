@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useUser } from "../../contexts/UserContext";
-import { useFetchData } from "../../hooks/useFetchData/useFetchData";
+import { useStatisticsQuery } from "../../hooks/queries/useStatisticsQuery";
 // import { mapColumn } from "../../helpers/excelColumnMapper";
 import { DataTransformer } from '../../transformers/data.transformer'
 import ChartViewer from "../../components/ChartViewer/ChartViewer";
@@ -14,16 +14,16 @@ import { BarChart3 } from "lucide-react";
 const DataViewer: React.FC = () => {
   const { t, i18n } = useTranslation();
   const { isApproved } = useUser();
-  const { data, loading } = useFetchData("statistics", isApproved);
+  const { data: records, isLoading } = useStatisticsQuery({ enabled: isApproved });
   const [filteredData, setFilteredData] = useState<TransformRow[]>([]);
   const [headers, setHeaders] = useState<string[]>([]);
   const [translatedMonths, setTranslatedMonths] = useState<{ [index: number]: string }>({});
 
   useEffect(() => {
-    if (data.length && isApproved) {
-      const columnMap = DataTransformer._mapColumns(data[0]);
+    if (records && records.length && isApproved) {
+      const columnMap = DataTransformer._mapColumns(records[0]);
 
-      const transformed = data.map((row) => ({
+      const transformed = records.map((row) => ({
         perfectGoal: row[columnMap.perfectGoal],
         ourMoney: row[columnMap.ourMoney] || 0,
         actualGoal: row[columnMap.actualGoal] || 0,
@@ -34,7 +34,7 @@ const DataViewer: React.FC = () => {
       setFilteredData(transformed);
       setHeaders(['perfectGoal', 'ourMoney', 'actualGoal', 'actualPecent', 'month']);
     }
-  }, [data, isApproved]);
+  }, [records, isApproved]);
 
   useEffect(() => {
     const updated = filteredData.reduce((acc, row, index) => {
@@ -44,7 +44,7 @@ const DataViewer: React.FC = () => {
     setTranslatedMonths(updated);
   }, [i18n.language, filteredData])
 
-  if (loading) return <Spinner />
+  if (isLoading) return <Spinner />
 
   if (!isApproved) {
     return (
@@ -65,7 +65,7 @@ const DataViewer: React.FC = () => {
     );
   }
 
-  if (!data.length) return <p style={{ textAlign: 'center', marginTop: '40px' }}>No data</p>;
+  if (!records || !records.length) return <p style={{ textAlign: 'center', marginTop: '40px' }}>No data</p>;
 
   return (
     <div>

@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { useNews } from "../../hooks/useRealtimeTable/useNews";
-import { useQuotes } from "../../hooks/useRealtimeTable/useQuotes";
+import { useNewsQuery } from "../../hooks/queries/useNewsQuery";
+import { useQuotesQuery } from "../../hooks/queries/useQuotesQuery";
 import { useRealtimeTable } from "../../hooks/useRealtimeTable/useRealtimeTable";
 import {
   Settings,
@@ -26,7 +26,7 @@ interface Profile {
 
 const NewsSection: React.FC<{ isApproved: boolean }> = ({ isApproved }) => {
   const { t } = useTranslation();
-  const { data: news } = useNews({ enabled: isApproved });
+  const { data: news, isLoading } = useNewsQuery({ enabled: isApproved });
 
   if (!isApproved) {
     return (
@@ -39,6 +39,7 @@ const NewsSection: React.FC<{ isApproved: boolean }> = ({ isApproved }) => {
     );
   }
 
+  if (isLoading) return <div className="card-text">{t('loading')}...</div>;
   if (!news || news.length === 0) return null;
 
   const latestNews = [...news]
@@ -60,7 +61,7 @@ const NewsSection: React.FC<{ isApproved: boolean }> = ({ isApproved }) => {
 
 const QuoteSection: React.FC<{ isApproved: boolean }> = ({ isApproved }) => {
   const { t } = useTranslation();
-  const { data: quotes } = useQuotes({ enabled: isApproved });
+  const { data: quotes, isLoading } = useQuotesQuery({ enabled: isApproved });
 
   if (!isApproved) {
     return (
@@ -73,6 +74,7 @@ const QuoteSection: React.FC<{ isApproved: boolean }> = ({ isApproved }) => {
     );
   }
 
+  if (isLoading) return <div className="card-text">{t('loading')}...</div>;
   if (!quotes || quotes.length === 0) return null;
   const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
 

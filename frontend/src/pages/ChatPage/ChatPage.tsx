@@ -3,8 +3,10 @@ import { useTranslation } from "react-i18next";
 import { useChatLogic } from "./useChatLogic";
 import { useUser } from "../../contexts/UserContext";
 import { useNavigate } from 'react-router-dom';
-import { useNews } from "../../hooks/useRealtimeTable/useNews";
-import { useQuotes } from "../../hooks/useRealtimeTable/useQuotes";
+import { useNewsQuery } from "../../hooks/queries/useNewsQuery";
+import { useQuotesQuery } from "../../hooks/queries/useQuotesQuery";
+import { useNewsMutation } from "../../hooks/queries/useNewsMutation";
+import { useQuotesMutation } from "../../hooks/queries/useQuotesMutation";
 import { AdminConfig, AdminTabType, useAdminPanel } from "../../hooks/useAdminPanel/useAdminPanel";
 import TabSwiperPopup from "../../components/TabSwiper/TabSwiper";
 import {
@@ -60,21 +62,23 @@ const ChatPage: React.FC = () => {
   const isAdmin = role === "admin";
   const navigate = useNavigate();
 
-  const news = useNews();
-  const quotes = useQuotes();
+  const news = useNewsQuery({ enabled: true });
+  const quotes = useQuotesQuery({ enabled: true });
+  const newsMutation = useNewsMutation();
+  const quotesMutation = useQuotesMutation();
 
   useEffect(() => {
-    if (news.error) toast.error(`News Error: ${news.error}`);
-  }, [news.error]);
+    if (news.isError) toast.error(`News Error: ${news.error}`);
+  }, [news.isError, news.error]);
 
   useEffect(() => {
-    if (quotes.error) toast.error(`Quotes Error: ${quotes.error}`);
-  }, [quotes.error]);
+    if (quotes.isError) toast.error(`Quotes Error: ${quotes.error}`);
+  }, [quotes.isError, quotes.error]);
 
   const [{ adminTab, form, editingId }, { setAdminTab, setForm, handleSubmit, handleEdit, handleDelete, resetForm }] =
     useAdminPanel(
       ADMIN_CONFIG,
-      (tab) => tab === "news" ? news : tab === "quotes" ? quotes : null
+      (tab) => tab === "news" ? newsMutation : tab === "quotes" ? quotesMutation : null
     );
 
   const handleBack = () => navigate(-1);
@@ -125,7 +129,9 @@ const ChatPage: React.FC = () => {
 
     return (
       <div className="admin-content-wrapper">
-        {ds.data.map((item: any) => (
+        {ds.isLoading ? (
+          <p>{t('loading')}...</p>
+        ) : (ds.data || []).map((item: any) => (
           <div key={item.id} className="message-item-wrapper">
             <div className="message message-sent">{config.render(item)}</div>
             <div className="message-action-buttons">

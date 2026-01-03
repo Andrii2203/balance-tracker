@@ -5,24 +5,37 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import './i18n';
 
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+      retry: 1,
+    },
+  },
+});
+
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 root.render(
   <React.StrictMode>
-    <App />
+    <QueryClientProvider client={queryClient}>
+      <App />
+    </QueryClientProvider>
   </React.StrictMode>
 );
 
-if('serviceWorker' in navigator) {
+if ('serviceWorker' in navigator) {
   window.addEventListener("load", () => {
     navigator.serviceWorker.register('/service-worker.js')
-    .then(registration => {
-      console.log("ServiceWorker registered:", registration);
-    })
-    .catch(error => {
-      console.log("ServiceWorker registration failed:", error);
-    });
+      .then(registration => {
+        console.log("ServiceWorker registered:", registration);
+      })
+      .catch(error => {
+        console.log("ServiceWorker registration failed:", error);
+      });
   });
 }
 

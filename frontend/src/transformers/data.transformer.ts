@@ -1,6 +1,9 @@
-import { Row } from "../hooks/useFetchData/useFetchData";
 import { TransformRow } from "../helpers/types";
 import { translateMonth } from "../locales/monthTranslator/monthTranslator";
+
+export interface Row {
+    [key: string]: any;
+}
 
 export const DataTransformer = {
     /**

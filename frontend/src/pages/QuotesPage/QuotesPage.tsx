@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { MessageSquareQuote, ArrowLeft } from "lucide-react";
-import { useQuotes } from "../../hooks/useRealtimeTable/useQuotes";
+import { useQuotesQuery } from "../../hooks/queries/useQuotesQuery";
 import { useUser } from "../../contexts/UserContext";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -9,11 +9,8 @@ import "./QuotesPage.css";
 const QuotesPage: React.FC = () => {
   const { t } = useTranslation();
   const { isApproved } = useUser();
-  const { data: quotes, loading, error } = useQuotes({ enabled: isApproved });
+  const { data: quotes, isLoading } = useQuotesQuery({ enabled: isApproved });
   const navigate = useNavigate();
-
-  if (loading) return <div className="quotes-container"><p>Loading quotes...</p></div>;
-  if (error) return <div className="quotes-container"><p style={{ color: "red" }}>Error: {error}</p></div>;
 
   return (
     <div className="page-container">
@@ -29,7 +26,9 @@ const QuotesPage: React.FC = () => {
             <p className="restricted-msg">{t('accessRestricted') || "Access Restricted"}</p>
             <p className="restricted-sub">{t('waitApproval') || "Ask Admin for access."}</p>
           </div>
-        ) : quotes.length === 0 ? (
+        ) : isLoading ? (
+          <p>{t('loading')}...</p>
+        ) : !quotes || quotes.length === 0 ? (
           <p>No quotes available yet</p>
         ) : (
           <div className="quotes-list" style={{ display: 'flex', flexDirection: 'column' }}>
