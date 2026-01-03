@@ -19,7 +19,8 @@ import {
   Trash2,
   Circle,
   MessageCircle,
-  ArrowRight
+  ArrowRight,
+  SendHorizontal
 } from "lucide-react";
 import { toast, Toaster } from "sonner";
 import "./ChatPage.css";
@@ -227,7 +228,7 @@ const ChatPage: React.FC = () => {
               onKeyDown={(e) => e.key === "Enter" && sendMessage()}
             />
             <button onClick={sendMessage} className="send-button">
-              <Send size={24} />
+              <SendHorizontal size={24} />
             </button>
           </div>
         </div>
