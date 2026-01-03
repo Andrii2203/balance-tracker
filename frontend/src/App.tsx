@@ -1,34 +1,22 @@
-import React, { useState } from "react";
-import { BrowserRouter as Router, useLocation } from "react-router-dom";
-import { UserProvider, useUser } from "./contexts/UserContext";
+import React from "react";
+import { BrowserRouter as Router } from "react-router-dom";
+import { UserProvider } from "./contexts/UserContext";
 import AppRoutes from "./AppRoutes";
-import BottomNav from "./components/BottomNav/BottomNav";
-import { navItems } from "./data/navItems";
-import './App.css'
-
-const AppContent = () => {
-  const { username } = useUser();
-  const [hideUI, setHideUI] = useState<boolean>(false);
-
-  return (
-    <>
-      <AppRoutes setHideUI={setHideUI} />
-      {/* {!hideUI && (
-        <BottomNav items={navItems} />
-      )} */}
-      {username && !hideUI && (
-        <BottomNav items={navItems} />
-      )}
-    </>
-  )
-}
+import './App.css';
 
 function App() {
+  React.useEffect(() => {
+    // Initialize Theme
+    const savedTheme = localStorage.getItem('theme-color');
+    if (savedTheme) {
+      document.documentElement.style.setProperty('--primary-color', savedTheme);
+    }
+  }, []);
 
   return (
     <UserProvider>
       <Router>
-        <AppContent />
+        <AppRoutes />
       </Router>
     </UserProvider>
   );

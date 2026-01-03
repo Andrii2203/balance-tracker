@@ -1,0 +1,197 @@
+/* ========================================
+   INSTAGRAM-STYLE CHAT UI (REFINED)
+   ======================================== */
+
+html,
+body {
+  background-color: #ffffff;
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+/* Chat Container */
+#chat-container {
+  display: flex;
+  flex-direction: column;
+  padding: 85px 0 110px 0;
+  /* Space for fixed header and floating input */
+  min-height: 100vh;
+  background-color: #ffffff;
+  box-sizing: border-box;
+}
+
+/* Message Bubbles */
+.message-wrapper {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 2px;
+  max-width: 75%;
+}
+
+.message-wrapper.own {
+  align-self: flex-end;
+  padding-right: 12px;
+}
+
+.message-wrapper.other {
+  align-self: flex-start;
+  padding-left: 12px;
+}
+
+.message-wrapper.same-sender {
+  margin-top: 1px;
+}
+
+.message-wrapper.different-sender {
+  margin-top: 12px;
+}
+
+.sender-name {
+  font-size: 12px;
+  color: #8e8e8e;
+  margin-bottom: 4px;
+  margin-left: 12px;
+}
+
+.message {
+  padding: 10px 16px;
+  font-size: 15px;
+  line-height: 1.4;
+  position: relative;
+  word-wrap: break-word;
+}
+
+.message-sent {
+  background-color: var(--primary-color, #0095f6);
+  color: #ffffff;
+  border-radius: 22px 22px 4px 22px;
+}
+
+.message-received {
+  background-color: #efefef;
+  color: #262626;
+  border-radius: 22px 22px 22px 4px;
+}
+
+.message-time {
+  font-size: 10px;
+  color: rgba(0, 0, 0, 0.3);
+  margin-top: 4px;
+  padding: 0 8px;
+}
+
+.message-sent .message-time {
+  color: rgba(255, 255, 255, 0.6);
+  text-align: right;
+}
+
+/* Redesigned Input Container (matching BottomNav) */
+.chat-input-wrapper {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: 0 10px 15px 10px;
+  /* Floating space */
+  box-sizing: border-box;
+  z-index: 100;
+}
+
+.message-input-container {
+  width: 100%;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  padding: 0 15px;
+  box-sizing: border-box;
+
+  /* Glassmorphism matching BottomNav */
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-2xl);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+.message-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  font-size: 15px;
+  color: #262626;
+  outline: none;
+  padding: 0;
+}
+
+.send-button {
+  background: none;
+  border: none;
+  color: var(--primary-color, #0095f6);
+  font-weight: 600;
+  padding: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s;
+}
+
+/* FIX: Send icon rotation per user request */
+.send-button svg {
+  transform: none !important;
+  /* Remove any 45-degree rotations */
+}
+
+.send-button:hover:not(:disabled) {
+  transform: scale(1.1);
+}
+
+.send-button:disabled {
+  opacity: 0.3;
+}
+
+/* Access Control Messages */
+.chat-blocked-message {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  text-align: center;
+  color: #8e8e8e;
+  font-style: italic;
+}
+
+/* Admin Styles */
+.chat-container-admin {
+  padding-top: 85px !important;
+}
+
+.message-action-buttons {
+  display: flex;
+  gap: 8px;
+  margin-top: 6px;
+  padding-left: 12px;
+}
+
+.button-edit,
+.button-delete {
+  font-size: 11px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  border: 1px solid #efefef;
+  background: white;
+  cursor: pointer;
+}
+
+.button-delete {
+  color: #ed4956;
+}
+
+/* Hide legacy glass containers */
+.glassContainer,
+.glassContainerInput {
+  display: none !important;
+}

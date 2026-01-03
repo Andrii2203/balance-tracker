@@ -8,6 +8,6 @@ interface NewsItem {
   created_at?: string;
 }
 
-export const useNews = () => {
-  return useRealtimeTable<NewsItem>("news");
+export const useNews = (options?: { enabled?: boolean }) => {
+  return useRealtimeTable<NewsItem>("news", options);
 };

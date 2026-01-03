@@ -1,18 +1,33 @@
 .btn-box {
   display: flex;
-  align-items: center;
-  margin-left: 10px;
-  position: absolute;
-  left: 0;
-  top: 60px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: var(--radius-md);
+  padding: 4px;
+  gap: 4px;
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--glass-border);
 }
+
 .btn-box button {
-  padding: 7px;
-  margin: 10px;
+  flex: 1;
+  background: transparent;
   border: none;
-  border-radius: 5px;
-  font-family: 'Times New Roman', Times, serif;
-  font-weight: 600;
-  color: #363636;
-  box-shadow: 3px 5px 5px #e2e2e28e;
+  color: var(--text-secondary);
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+  font-weight: 500;
+}
+
+.btn-box button:hover {
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.btn-box button.active {
+  background: var(--bg-surface);
+  color: var(--primary-color);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }

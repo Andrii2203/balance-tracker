@@ -1,35 +1,90 @@
+@import '../../theme/theme.css';
+
 .bottom-nav {
     position: fixed;
     bottom: 0;
+    left: 0;
     width: 100%;
-    height: 60px;
-    background-color: #fff;
-    border-top: 1px solid #ddd;
+    height: var(--bottom-nav-height);
     display: flex;
     justify-content: space-around;
     align-items: center;
-    z-index: 1000;
+    z-index: var(--z-fixed);
     user-select: none;
     -webkit-tap-highlight-color: transparent;
+
+    /* Glassmorphism Effect */
+    background: rgba(255, 255, 255, 0.4);
+    /* Increased transparency */
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+
+    border: 1px solid var(--glass-border);
+    /* Border on all sides */
+
+    box-shadow:
+        0 -4px 6px -1px rgba(0, 0, 0, 0.05),
+        0 -2px 4px -1px rgba(0, 0, 0, 0.03),
+        inset 0 1px 0 0 rgba(255, 255, 255, 0.5);
+
+    /* Rounded top corners */
+    border-top-left-radius: var(--radius-2xl);
+    border-top-right-radius: var(--radius-2xl);
+
+    /* Small bottom margin and side padding to make it look floating if needed, 
+       but user said "borders bottom, left, right", so I'll keep it pinned 
+       but with all borders. */
+    margin: 0 10px 10px 10px;
+    width: calc(100% - 20px);
+    border-bottom-left-radius: var(--radius-2xl);
+    border-bottom-right-radius: var(--radius-2xl);
 }
 
 .nav-item {
     display: flex;
     flex-direction: column;
     align-items: center;
-    color: #666;
+    justify-content: center;
+    gap: var(--spacing-xs);
+    padding: var(--spacing-sm);
+    color: var(--icon-primary);
     text-decoration: none;
-    font-size: 12px;
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-medium);
+    transition: all var(--transition-base);
+    border-radius: var(--radius-md);
+    min-width: 60px;
+}
+
+.nav-item:hover {
+    color: var(--icon-hover);
+    /* No background change for "cleaner" look */
+    background-color: transparent;
+}
+
+.nav-item:active {
+    transform: scale(0.95);
 }
 
 .nav-item svg {
-    font-size: 20px;
+    transition: all var(--transition-base);
+    fill: none;
+    /* Default state */
 }
 
 .nav-item.active {
-    color: #007bff;
+    /* color: var(--icon-active); */
+    color: var(--primary-color);
+}
+
+.nav-item.active svg {
+    /* "Instagram style": Fill the icon with color */
+    fill: currentColor;
+    stroke-width: 2.5;
 }
 
 .nav-label {
-    margin-top: 4px;
+    margin-top: var(--spacing-xs);
+    font-size: var(--font-size-xs);
+    letter-spacing: 0.01em;
 }

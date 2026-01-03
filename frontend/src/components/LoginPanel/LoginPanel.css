@@ -1,71 +1,175 @@
-:root {
-  --shared-font-size: 1.2rem;
-  --shared-line-height: 1.8rem;
-  --shared-font-weight: 700;
-  --shared-color: #333;
-  --button-bg: transparent;
-  --button-color: black;
-  --button-radius: 6px;
-  --button-padding: 0 0.5rem;
+/* Login Panel Styles */
+.login-panel-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 360px;
+  /* Removing the container card style */
+  background: transparent;
+  box-shadow: none;
+  border: none;
+  padding: 1rem;
+  gap: 2rem;
+  animation: fadeIn 0.5s ease-out;
 }
 
-.shared-h1 {
-  font-size: var(--shared-font-size);
-  font-weight: var(--shared-font-weight);
-  color: var(--shared-color);
-  margin: 0;
-  line-height: var(--shared-line-height);
-  vertical-align: middle;
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  /* Increased gap for separation */
+  width: 100%;
+}
+
+/* 3. SEPARATE BLOCKS */
+
+/* Block 1: Hello Text */
+.shared-h1 {
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--text-primary);
+  text-align: center;
+  letter-spacing: -0.02em;
+
+  /* Optional: Glass background for the text block itself? User just said "separate element" */
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  padding: 1.25rem;
+  border-radius: var(--radius-2xl);
+  width: 100%;
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-md);
+}
+
+/* Block 2: Input (Wrapper) */
 
 .shared-input {
-  padding: 0;                   /* прибираємо вертикальний padding */
-  font-size: var(--shared-font-size);
-  color: var(--shared-color);
-  font-weight: var(--shared-font-weight);
-  border: none;
-  border-bottom: 1px solid #ccc;
+  width: 100%;
+  padding: 1.25rem;
+  /* larger padding */
+  background: var(--glass-bg);
+  /* Glass background for input block */
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-2xl);
+  /* Rounded like a pill */
+  color: var(--text-primary);
+  font-size: var(--font-size-lg);
+  text-align: center;
+  transition: all var(--transition-base);
   outline: none;
-  background: transparent;
-  line-height: var(--shared-line-height);
-  vertical-align: middle;
-  flex: 1 1 auto;
-  min-width: 0;
-  max-width: 50%;
-  letter-spacing: normal;
+  box-shadow: var(--shadow-md);
+  backdrop-filter: var(--glass-blur);
+}
+
+.shared-input:focus {
+  background: var(--bg-secondary);
+  border-color: var(--primary-color);
+  transform: scale(1.02);
+  box-shadow: var(--shadow-lg);
 }
 
 .shared-input::placeholder {
-  color: var(--shared-color);
-  opacity: 0.5;
-  font-size: var(--shared-font-size);
-  font-weight: var(--shared-font-weight);
-  margin: 0;
-  padding: 0;
+  color: var(--text-tertiary);
 }
 
+/* Block 3: Button */
 .shared-button {
-  padding: var(--button-padding);
-  font-size: var(--shared-font-size);
-  border-radius: var(--button-radius);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 1.25rem;
+  /* High contrast background */
+  background: var(--primary-color, #6366f1);
+  color: #ffffff;
   border: none;
-  background-color: var(--button-bg);
-  color: var(--button-color);
+  border-radius: var(--radius-2xl);
+  /* Matching rounded look */
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
   cursor: pointer;
-  margin-left: 0.5rem;
-  line-height: var(--shared-line-height);
-  vertical-align: middle;
-  outline: none;
-  box-shadow: none;
-  user-select: none;
-  -webkit-tap-highlight-color: transparent;
+  transition: all var(--transition-base);
+
+  /* Separate block look */
+  box-shadow: var(--shadow-md);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
-.login-panel {
-  display: flex;
-  align-items: baseline;
-  gap: 0.5rem;
-  flex-wrap: nowrap;
-  box-sizing: border-box;
-  width: 100%;
+.shared-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  filter: brightness(1.1);
+  box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
+}
+
+.shared-button:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.shared-button:disabled {
+  background: var(--color-neutral-300, #ccc);
+  color: var(--color-neutral-500, #888);
+  opacity: 0.8;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.email-hint {
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+  text-align: center;
+
+  /* Make hint a small bubble too */
+  background: rgba(255, 255, 255, 0.5);
+  padding: 0.75rem;
+  border-radius: var(--radius-xl);
+  margin-bottom: 0.5rem;
+  border: 1px solid var(--glass-border);
+}
+
+.toggle-auth-mode {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-lg);
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+  cursor: pointer;
+  margin-top: 1rem;
+  transition: all var(--transition-base);
+  align-self: center;
+}
+
+.toggle-auth-mode:hover {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  transform: translateY(-1px);
+}
+
+.login-lang-switcher {
+  margin-top: 2rem;
+  opacity: 1;
+  /* Always visible */
+  background: var(--glass-bg);
+  padding: 0.5rem;
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--glass-border);
+}
+
+.login-lang-switcher:hover {
+  background: var(--bg-secondary);
 }

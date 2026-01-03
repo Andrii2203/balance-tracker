@@ -1,15 +1,21 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../../supabaseClient";
+import { useUser } from "../../contexts/UserContext";
 
 
-interface Message {
+export interface Message {
   id?: number;
   message: string;
+  user_id?: string;
+  profiles?: {
+    email: string;
+  };
   created_at?: string;
   pending?: boolean;
 }
 
 export const useChatLogic = () => {
+  const { user } = useUser();
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState("");
   const [online, setOnline] = useState<boolean>(navigator.onLine);
@@ -26,7 +32,7 @@ export const useChatLogic = () => {
 
       const { data, error } = await supabase
         .from("chat_messages")
-        .select("*")
+        .select("*, profiles(email)")
         .order("created_at", { ascending: true });
 
       if (error) console.error(error);
@@ -51,9 +57,10 @@ export const useChatLogic = () => {
               (m) =>
                 m.id === newMsg.id ||
                 (m.message === newMsg.message &&
+                  m.user_id === newMsg.user_id &&
                   Math.abs(
                     new Date(m.created_at || "").getTime() -
-                      new Date(newMsg.created_at || "").getTime()
+                    new Date(newMsg.created_at || "").getTime()
                   ) < 1500)
             );
             if (alreadyExists) return prev;
@@ -81,10 +88,14 @@ export const useChatLogic = () => {
 
   // ✉️ Надсилання нового повідомлення
   const sendMessage = async () => {
-    if (!newMessage.trim()) return;
+    if (!newMessage.trim() || !user) return;
+
+    const senderName = user.user_metadata?.full_name || user.email?.split('@')[0] || "User";
 
     const messageObj: Message = {
       message: newMessage,
+      user_id: user.id,
+      profiles: { email: user.email || "" },
       created_at: new Date().toISOString(),
       pending: !online,
     };
@@ -99,7 +110,10 @@ export const useChatLogic = () => {
     if (online) {
       const { error } = await supabase
         .from("chat_messages")
-        .insert([{ message: messageObj.message }]);
+        .insert([{
+          message: messageObj.message,
+          user_id: user.id
+        }]);
       if (error) console.error(error);
     } else {
       const pending = JSON.parse(localStorage.getItem("pending_msgs") || "[]");
@@ -111,7 +125,7 @@ export const useChatLogic = () => {
   // 🧭 Повторне надсилання офлайн-повідомлення вручну
   const resendMessage = async (index: number) => {
     const msg = messages[index];
-    if (!msg) return;
+    if (!msg || !user) return;
 
     if (!online) {
       alert("Немає підключення до інтернету 😞");
@@ -120,7 +134,10 @@ export const useChatLogic = () => {
 
     const { error } = await supabase
       .from("chat_messages")
-      .insert([{ message: msg.message }]);
+      .insert([{
+        message: msg.message,
+        user_id: user.id
+      }]);
 
     if (error) {
       console.error("Помилка при повторному надсиланні:", error);

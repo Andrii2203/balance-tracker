@@ -7,6 +7,6 @@ interface Quote {
   created_at?: string;
 }
 
-export const useQuotes = () => {
-  return useRealtimeTable<Quote>("quotes");
+export const useQuotes = (options?: { enabled?: boolean }) => {
+  return useRealtimeTable<Quote>("quotes", options);
 };

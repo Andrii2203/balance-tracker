@@ -8,12 +8,18 @@ interface CacheData {
   timestamp: number;
 }
 
-export function useFetchData(tableName: string) {
+export function useFetchData(tableName: string, enabled: boolean = true) {
   const [data, setData] = useState<Row[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(enabled);
   const dataRef = useRef<Row[]>([]);
 
   useEffect(() => {
+    if (!enabled) {
+      setData([]);
+      setLoading(false);
+      return;
+    }
+
     const cacheKey = `supabase_cache_${tableName}`;
     const cached = localStorage.getItem(cacheKey);
 
@@ -56,7 +62,7 @@ export function useFetchData(tableName: string) {
     };
 
     fetchData();
-  }, [tableName]);
+  }, [tableName, enabled]);
 
   return { data, loading };
 }

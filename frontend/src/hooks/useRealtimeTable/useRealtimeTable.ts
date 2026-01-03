@@ -1,20 +1,27 @@
 import { useEffect, useState, useRef } from "react";
-import { supabase } from "../../supabaseClient";
+// import { supabase } from "../../supabaseClient";
+import { supabase } from '../../supabaseClient'
 
 interface BaseRecord {
-  id?: number;
+  id?: number | string;
   created_at?: string;
 }
 
-export function useRealtimeTable<T extends BaseRecord>(tableName: string) {
+export function useRealtimeTable<T extends BaseRecord>(tableName: string, options: { enabled?: boolean } = { enabled: true }) {
   const [data, setData] = useState<T[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(options.enabled ? true : false);
   const [error, setError] = useState<string | null>(null);
   const channelRef = useRef<any>(null);
   const processedEventsRef = useRef<Set<string>>(new Set());
 
   useEffect(() => {
-    if (!tableName) return;
+    if (!tableName || !options.enabled) {
+      if (!options.enabled) {
+        setLoading(false);
+        setData([]);
+      }
+      return;
+    }
 
     if (channelRef.current) {
       console.log(`🔌 Cleaning up previous subscription for ${tableName}`);
@@ -24,17 +31,25 @@ export function useRealtimeTable<T extends BaseRecord>(tableName: string) {
     const fetchData = async () => {
       setLoading(true);
       console.log(`🔄 Fetching ${tableName}...`);
+
+      // Simple fetch without strict ordering that might fail
       const { data, error } = await supabase
         .from(tableName)
-        .select("*")
-        .order("created_at", { ascending: true });
+        .select("*");
 
       if (error) {
         console.error(`❌ Error fetching ${tableName}:`, error.message);
         setError(error.message);
       } else {
-        console.log(`✅ Fetched ${tableName}:`, data);
-        setData(data || []);
+        console.log(`✅ Fetched ${tableName}`);
+        // Sort in memory if created_at exists
+        const sorted = data ? [...data].sort((a, b) => {
+          if (a.created_at && b.created_at) {
+            return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+          }
+          return 0;
+        }) : [];
+        setData(sorted);
       }
       setLoading(false);
     };
@@ -48,20 +63,20 @@ export function useRealtimeTable<T extends BaseRecord>(tableName: string) {
         { event: "*", schema: "public", table: tableName },
         (payload: any) => {
           console.log(`📡 Realtime event on ${tableName}:`, payload.eventType, payload);
-          
+
           const eventKey = `${payload.eventType}-${payload.new?.id || payload.old?.id}-${payload.commit_timestamp}`;
-          
+
           if (processedEventsRef.current.has(eventKey)) {
             console.log(`⚠️ Duplicate event detected, skipping: ${eventKey}`);
             return;
           }
-          
+
           processedEventsRef.current.add(eventKey);
-          
+
           if (processedEventsRef.current.size > 100) {
             processedEventsRef.current.clear();
           }
-          
+
           const newRow = payload.new as T;
           const oldId = (payload.old as T)?.id;
 
@@ -107,11 +122,9 @@ export function useRealtimeTable<T extends BaseRecord>(tableName: string) {
             }
 
             if (changed) {
-              console.log(`📊 After ${payload.eventType}:`, updated.length, "items");
-            } else {
-              console.log(`📊 No changes for ${payload.eventType}`);
+              console.log(`📊 Updated ${tableName} after ${payload.eventType}`);
             }
-            
+
             return changed ? updated : prev;
           });
         }
@@ -125,7 +138,7 @@ export function useRealtimeTable<T extends BaseRecord>(tableName: string) {
       channel.unsubscribe();
       channelRef.current = null;
     };
-  }, [tableName]);
+  }, [tableName, options.enabled]);
 
 
   const insert = async (record: Omit<T, "id" | "created_at">) => {
@@ -141,15 +154,13 @@ export function useRealtimeTable<T extends BaseRecord>(tableName: string) {
       return null;
     }
 
-    console.log(`✅ Insert successful:`, newData);
     if (newData && newData.length) {
-
       return newData[0];
     }
     return null;
   };
 
-  const update = async (id: number, record: Partial<T>) => {
+  const update = async (id: number | string, record: Partial<T>) => {
     console.log(`📝 Updating ${tableName} id ${id}:`, record);
     const { data: updated, error } = await supabase
       .from(tableName)
@@ -165,7 +176,7 @@ export function useRealtimeTable<T extends BaseRecord>(tableName: string) {
     }
   };
 
-  const remove = async (id: number) => {
+  const remove = async (id: number | string) => {
     console.log(`📝 Deleting ${tableName} id ${id}`);
     const { error } = await supabase.from(tableName).delete().eq("id", id);
     if (error) {

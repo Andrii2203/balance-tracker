@@ -1,0 +1,81 @@
+.welcome-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  padding: 0 2rem;
+  /* background: var(--bg-primary); */
+  overflow: hidden;
+}
+
+.greeting-text {
+  /* Restoring the cursive font */
+  font-family: 'Alex Brush', cursive;
+  font-size: 3.5rem;
+  /* Reduced from 5rem */
+  font-weight: 400;
+
+  /* 1. SOLID COLOR requested by user */
+  color: var(--primary-color);
+
+  margin-bottom: 2.5rem;
+  /* Reduced margin to match smaller text */
+  text-align: center;
+  line-height: 1.1;
+
+  /* Removing gradient for solid visibility */
+  background: none;
+  -webkit-background-clip: border-box;
+  background-clip: border-box;
+  -webkit-text-fill-color: initial;
+
+  /* Drop shadow for depth */
+  text-shadow: 0 4px 12px rgba(var(--primary-rgb), 0.2);
+}
+
+.welcome-buttons {
+  display: flex;
+  gap: 4rem;
+  /* More space */
+  justify-content: center;
+  align-items: center;
+}
+
+.btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  padding: 1.5rem;
+  /* Larger touch area */
+  border-radius: 50%;
+  color: var(--text-secondary);
+  transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* 2. PROPORTIONAL SVG SIZE */
+.btn svg {
+  width: 32px;
+  height: 32px;
+  /* Ensure icon is larger to match the 5rem text visual weight */
+  stroke-width: 1.5;
+}
+
+.btn:hover {
+  transform: scale(1.15);
+  color: var(--primary-color);
+  background: rgba(99, 102, 241, 0.08);
+  box-shadow: 0 8px 30px rgba(99, 102, 241, 0.2);
+}
+
+.btn:active {
+  transform: scale(0.95);
+}
+
+.btn-confirm {
+  color: var(--primary-color);
+}

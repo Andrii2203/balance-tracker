@@ -1,0 +1,9 @@
+.new-list-container {
+  padding-bottom: 50px;
+}
+
+.news-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}

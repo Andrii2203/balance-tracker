@@ -208,10 +208,20 @@
     font-size: 14px;
   }
 
-  .button-edit,
-  .button-delete {
-    padding: 5px 10px;
-    font-size: 11px;
+  .form-button-group {
+    flex-direction: row;
+    /* Keep buttons side-by-side but ensure they fit */
   }
 
+  .form-input {
+    font-size: 16px;
+    /* Prevent zoom on iOS */
+  }
+
+  .button-edit,
+  .button-delete {
+    padding: 8px 12px;
+    /* Larger touch targets */
+    font-size: 12px;
+  }
 }

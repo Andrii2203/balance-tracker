@@ -1,9 +1,12 @@
 .chart-js-box {
     width: 100%;
-    overflow: auto;
+    overflow-x: auto;
+    /* Enable horizontal scrolling for large datasets */
+    padding-bottom: 20px;
+    -webkit-overflow-scrolling: touch;
     margin: 0;
-    padding: 0;
 }
+
 .amarkets-p {
     margin: 0;
     padding: 0;
@@ -14,6 +17,7 @@
     font-weight: 600;
     background-color: orange;
 }
+
 .our-money-p {
     font-size: 26px;
     margin: 0 0 15px 0;
@@ -26,6 +30,7 @@
     font-weight: 600;
     background-color: rgb(230, 230, 230);
 }
+
 .difference-p {
     text-align: center;
     color: black;

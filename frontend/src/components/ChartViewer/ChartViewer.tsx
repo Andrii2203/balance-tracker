@@ -13,7 +13,7 @@ interface Props {
 }
 
 const ChartViewer: React.FC<Props> = ({ data }) => {
-    const { t, i18n } = useTranslation();
+    const { t } = useTranslation();
 
     const processedData = useMemo(() => {
         const labels = data.map(row => translateMonth(row.month));
@@ -29,10 +29,10 @@ const ChartViewer: React.FC<Props> = ({ data }) => {
         const maxY = ourMoney.length ? Math.max(...ourMoney) : 100;
 
         return { labels, actualGoalData, perfectGoalData, actualPercentData, ourMoney, lastMonthMoney, secondLastValue, differenceFromPrevMonth, maxY };
-    }, [data, i18n.language]);
+    }, [data, t]);
 
     const ourMoneyText = useMemo(() => {
-        return`${t('ourMoney')}: $${processedData.lastMonthMoney}`;
+        return `${t('ourMoney')}: $${processedData.lastMonthMoney}`;
     }, [processedData.lastMonthMoney, t]);
 
     const chartConfig = useMemo(() => ({
@@ -57,8 +57,8 @@ const ChartViewer: React.FC<Props> = ({ data }) => {
 
     const options = useMemo(() => ({
         responsive: true,
-        maintainAspectRatio: true,
-        aspectRatio: 1,
+        maintainAspectRatio: false,
+        // aspectRatio: 1, // Removed to allow container to control height
         plugins: {
             legend: {
                 position: "bottom" as const,
@@ -85,7 +85,7 @@ const ChartViewer: React.FC<Props> = ({ data }) => {
                 beginAtZero: true,
                 ticks: {
                     font: { size: 15 },
-                    callback: (value: number | string) => Number(value) === processedData.maxY ? `🤑${value}` : value,
+                    callback: (value: number | string) => Number(value) === processedData.maxY ? `$${value}` : value,
                     color: (ctx: { tick: { value: number } }) => ctx.tick.value === processedData.maxY ? "#FF0000" : "#666",
                 },
             },
@@ -97,7 +97,9 @@ const ChartViewer: React.FC<Props> = ({ data }) => {
             <div style={{ minWidth: `${Math.max(processedData.perfectGoalData.length * 20, 100)}px` }}>
                 <p className="amarkets-p">AMarkets</p>
                 <p className="our-money-p">{ourMoneyText}</p>
-                <Bar data={chartConfig} options={options} />
+                <div style={{ position: "relative", height: "50vh", width: "100%" }}>
+                    <Bar data={chartConfig} options={options} />
+                </div>
                 {processedData.differenceFromPrevMonth < 0 && (
                     <p className="difference-p">
                         {t('prevMonth')} ${processedData.secondLastValue} - {t('now').toLowerCase()} ${processedData.lastMonthMoney} = {t('ourMoney').toLowerCase()} ${processedData.differenceFromPrevMonth} {t('per').toLowerCase()} {t('month').toLowerCase()}
