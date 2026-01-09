@@ -26,7 +26,31 @@
 .nav-actions {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
+}
+
+/* Position nav actions in header (moved from inline styles) */
+.nav-actions {
+  position: absolute;
+  right: 15px;
+}
+
+/* App version badge for admin */
+.app-version-badge {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-tertiary);
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  padding: 4px 8px;
+  border-radius: 8px;
+  cursor: help;
+  transition: all 0.2s;
+}
+
+.app-version-badge:hover {
+  color: var(--primary-color);
+  border-color: var(--primary-color);
 }
 
 .nav-icon-btn {
@@ -40,7 +64,7 @@
   justify-content: center;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  color: var(--text-primary);
+  color: var(--icon-color);
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
 
@@ -172,13 +196,8 @@
 
 .home-content {
   gap: var(--spacing-lg);
-  overflow-y: auto;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-}
-
-.home-content::-webkit-scrollbar {
-  display: none;
+  /* Use the layout's single scroll container. Avoid internal vertical scrolls. */
+  overflow: visible;
 }
 
 /* Glass Cards (Widgets) */
@@ -268,6 +287,12 @@
   line-height: 1.4;
 }
 
+/* Smaller quote variant used on HomePage */
+.quote-text-small {
+  font-style: italic;
+  font-size: 1rem;
+}
+
 .quote-content span {
   font-weight: 600;
   color: var(--primary-color);
@@ -300,11 +325,26 @@
   margin-top: 20px;
 }
 
+/* Modifier for bottom spacing when needed */
+.access-restricted-container.mb-20 {
+  margin-bottom: 20px;
+}
+
+/* Greeting title moved from inline styles */
+.greeting-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
 .restricted-msg {
   font-size: 1.2rem;
   font-weight: 600;
   color: var(--primary-color);
-  margin-bottom: 8px;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
 }
 
 .restricted-sub {

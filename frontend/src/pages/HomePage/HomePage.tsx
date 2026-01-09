@@ -1,4 +1,6 @@
+
 import React, { useState } from 'react';
+import { logger } from '../../utils/logger';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useNewsQuery } from "../../hooks/queries/useNewsQuery";
@@ -14,9 +16,11 @@ import {
   X
 } from 'lucide-react';
 import { useUser } from "../../contexts/UserContext";
-import { motion, AnimatePresence } from 'framer-motion';
 import LoginPanel from "../../components/LoginPanel/LoginPanel";
 import "./HomePage.css";
+// App version - update this when deploying new versions
+export const APP_VERSION = '2.1.0';
+export const APP_BUILD_DATE = new Date().toISOString().split('T')[0];
 
 interface Profile {
   id: string;
@@ -27,11 +31,42 @@ interface Profile {
 const NewsSection: React.FC<{ isApproved: boolean }> = ({ isApproved }) => {
   const { t } = useTranslation();
   const { data: news, isLoading } = useNewsQuery({ enabled: isApproved });
+  const [cachedNews, setCachedNews] = React.useState<any[] | null>(null);
+
+  React.useEffect(() => {
+    const load = async () => {
+      try {
+        const rec = await import('../../services/db').then(m => m.readCachedRecord('news'));
+        if (rec && rec.value) setCachedNews(rec.value);
+      } catch (err) {
+        // ignore
+      }
+    };
+    load();
+  }, []);
+
+  if (!navigator.onLine && cachedNews && cachedNews.length > 0) {
+    const latest = [...cachedNews]
+      .sort((a: any, b: any) => new Date(b.created_at || b.date || 0).getTime() - new Date(a.created_at || a.date || 0).getTime())
+      .slice(0, 3);
+
+    return (
+      <div className="news-grid">
+        {latest.map((item: any) => (
+          <div key={item.id} className="glass-card-item">
+            <div className="card-title">{item.title}</div>
+            <div className="card-text">{item.summary}</div>
+            <div className="card-footer">{item.date}</div>
+          </div>
+        ))}
+      </div>
+    );
+  }
 
   if (!isApproved) {
     return (
-      <div className="access-restricted-container glass-card" style={{ marginBottom: '20px' }}>
-        <p className="restricted-msg" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginBottom: '12px' }}>
+      <div className="access-restricted-container glass-card mb-20">
+        <p className="restricted-msg">
           <Newspaper size={20} /> {t('news')}
         </p>
         <p className="restricted-sub">{t('waitApproval') || "Ask Admin for access."}</p>
@@ -62,11 +97,36 @@ const NewsSection: React.FC<{ isApproved: boolean }> = ({ isApproved }) => {
 const QuoteSection: React.FC<{ isApproved: boolean }> = ({ isApproved }) => {
   const { t } = useTranslation();
   const { data: quotes, isLoading } = useQuotesQuery({ enabled: isApproved });
+  const [cachedQuotes, setCachedQuotes] = React.useState<any[] | null>(null);
+
+  React.useEffect(() => {
+    const load = async () => {
+      try {
+        const rec = await import('../../services/db').then(m => m.readCachedRecord('quotes'));
+        if (rec && rec.value) setCachedQuotes(rec.value);
+      } catch (err) {
+        // ignore
+      }
+    };
+    load();
+  }, []);
+
+  if (!navigator.onLine && cachedQuotes && cachedQuotes.length > 0) {
+    const randomQuote = cachedQuotes[Math.floor(Math.random() * cachedQuotes.length)];
+    return (
+      <div className="glass-card-item quote-card">
+        <div className="quote-content">
+          <p className="card-text quote-text-small">"{randomQuote.text}"</p>
+          <div className="card-footer">— {randomQuote.author}</div>
+        </div>
+      </div>
+    );
+  }
 
   if (!isApproved) {
     return (
       <div className="access-restricted-container glass-card">
-        <p className="restricted-msg" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginBottom: '12px' }}>
+        <p className="restricted-msg">
           <MessageSquareQuote size={20} /> {t('quotes')}
         </p>
         <p className="restricted-sub">{t('waitApproval') || "Ask Admin for access."}</p>
@@ -81,7 +141,7 @@ const QuoteSection: React.FC<{ isApproved: boolean }> = ({ isApproved }) => {
   return (
     <div className="glass-card-item quote-card">
       <div className="quote-content">
-        <p className="card-text" style={{ fontStyle: 'italic', fontSize: '1rem' }}>"{randomQuote.text}"</p>
+        <p className="card-text quote-text-small">"{randomQuote.text}"</p>
         <div className="card-footer">— {randomQuote.author}</div>
       </div>
     </div>
@@ -94,8 +154,8 @@ const ChartsSection: React.FC<{ isApproved: boolean }> = ({ isApproved }) => {
   if (isApproved) return null;
 
   return (
-    <div className="access-restricted-container glass-card" style={{ marginBottom: '20px' }}>
-      <p className="restricted-msg" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginBottom: '12px' }}>
+    <div className="access-restricted-container glass-card mb-20">
+      <p className="restricted-msg">
         <BarChart3 size={20} /> {t('charts')}
       </p>
       <p className="restricted-sub">{t('waitApproval') || "Ask Admin for access."}</p>
@@ -113,14 +173,12 @@ const HomePage: React.FC = () => {
 
   const [showApprovalModal, setShowApprovalModal] = useState(false);
 
-  // Realtime profiles for Admin to approve
-  const { data: profiles, update: updateProfile, loading: profilesLoading } = useRealtimeTable<Profile>(isAdmin ? "profiles" : "", { enabled: isAdmin });
+  const { data: profiles, update: updateProfile } = useRealtimeTable<Profile>(isAdmin ? "profiles" : "", { enabled: isAdmin });
   const unapprovedUsers = profiles.filter(p => !p.is_approved && p.id !== user?.id);
 
   React.useEffect(() => {
     if (isAdmin) {
-      // General count logging for admin is fine, but avoid logging full objects if possible
-      console.log("👑 ADMIN_DASHBOARD:", {
+      logger.info("👑 ADMIN_DASHBOARD:", {
         profilesCount: profiles.length,
         unapprovedCount: unapprovedUsers.length,
       });
@@ -128,101 +186,79 @@ const HomePage: React.FC = () => {
   }, [profiles.length, unapprovedUsers.length, isAdmin]);
 
   const handleApprove = async (id: string) => {
-    console.log("⚡ Approving user:", id);
+    logger.info("⚡ Approving user:", id);
     await updateProfile(id as any, { is_approved: true } as any);
   };
 
   return (
     <div className="page-container home-container">
-      <AnimatePresence mode="wait">
-        {!user ? (
-          <motion.div
-            key="login"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-          >
-            <LoginPanel showLanguageSwitcher={showLanguageSwitcher} />
-          </motion.div>
-        ) : (
-          <motion.div
-            key="home"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="home-wrapper"
-          >
-            {/* Header Row */}
-            <header className="unified-header">
-              <motion.h1
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                style={{ fontSize: '1.2rem', fontWeight: 600 }}
-              >
-                {t('hello', { name: localStorage.getItem('user_name') || user.user_metadata?.full_name || user.email?.split('@')[0] || "User" })}
-              </motion.h1>
+      {!user ? (
+        <LoginPanel showLanguageSwitcher={showLanguageSwitcher} />
+      ) : (
+        <div className="home-wrapper">
+          <header className="unified-header">
+            <h1 className="greeting-title">
+              {t('hello', { name: localStorage.getItem('user_name') || user.user_metadata?.full_name || user.email?.split('@')[0] || "User" })}
+            </h1>
 
-              <div className="nav-actions" style={{ position: 'absolute', right: '15px' }}>
-                {isAdmin && (
-                  <button
-                    className="nav-icon-btn approval-btn"
-                    onClick={() => setShowApprovalModal(true)}
-                  >
-                    <UserCheck size={24} />
-                    {unapprovedUsers.length > 0 && (
-                      <span className="notification-badge">{unapprovedUsers.length}</span>
-                    )}
-                  </button>
-                )}
-                <button className="nav-icon-btn" onClick={() => navigate('/settings')}>
-                  <Settings size={24} />
-                </button>
+            <div className="nav-actions">
+              <div className="app-version-badge" title={`Build: ${APP_BUILD_DATE}`}>
+                v{APP_VERSION}
               </div>
-            </header>
-
-            {/* Scrollable Content */}
-            <div className="page-content home-content">
-              <ChartsSection isApproved={isApproved} />
-              <NewsSection isApproved={isApproved} />
-              <QuoteSection isApproved={isApproved} />
-            </div>
-
-            <AnimatePresence>
-              {showApprovalModal && (
-                <div className="modal-overlay" onClick={() => setShowApprovalModal(false)}>
-                  <motion.div
-                    className="approval-modal glass-card"
-                    initial={{ opacity: 0, scale: 0.9, y: 20 }}
-                    animate={{ opacity: 1, scale: 1, y: 0 }}
-                    exit={{ opacity: 0, scale: 0.9, y: 20 }}
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    <div className="modal-header">
-                      <h3>Pending Approvals</h3>
-                      <button className="close-btn" onClick={() => setShowApprovalModal(false)}><X size={20} /></button>
-                    </div>
-                    <div className="users-list">
-                      {unapprovedUsers.length === 0 ? (
-                        <p className="empty-msg">No pending requests</p>
-                      ) : (
-                        unapprovedUsers.map(u => (
-                          <div key={u.id} className="user-item">
-                            <div className="user-info">
-                              <span className="user-email">{u.email}</span>
-                            </div>
-                            <button className="approve-action-btn" onClick={() => handleApprove(u.id)}>
-                              <Check size={18} />
-                            </button>
-                          </div>
-                        ))
-                      )}
-                    </div>
-                  </motion.div>
-                </div>
+              {isAdmin && (
+                <button
+                  className="nav-icon-btn approval-btn"
+                  onClick={() => setShowApprovalModal(true)}
+                >
+                  <UserCheck size={24} />
+                  {unapprovedUsers.length > 0 && (
+                    <span className="notification-badge">{unapprovedUsers.length}</span>
+                  )}
+                </button>
               )}
-            </AnimatePresence>
-          </motion.div>
-        )}
-      </AnimatePresence>
+              <button className="nav-icon-btn" onClick={() => navigate('/settings')}>
+                <Settings size={24} />
+              </button>
+            </div>
+          </header>
+
+          <div className="page-content home-content">
+            <ChartsSection isApproved={isApproved} />
+            <NewsSection isApproved={isApproved} />
+            <QuoteSection isApproved={isApproved} />
+          </div>
+
+          {showApprovalModal && (
+            <div className="modal-overlay" onClick={() => setShowApprovalModal(false)}>
+              <div
+                className="approval-modal glass-card"
+                onClick={(e: React.MouseEvent) => e.stopPropagation()}
+              >
+                <div className="modal-header">
+                  <h3>Pending Approvals</h3>
+                  <button className="close-btn" onClick={() => setShowApprovalModal(false)}><X size={20} /></button>
+                </div>
+                <div className="users-list">
+                  {unapprovedUsers.length === 0 ? (
+                    <p className="empty-msg">No pending requests</p>
+                  ) : (
+                    unapprovedUsers.map(u => (
+                      <div key={u.id} className="user-item">
+                        <div className="user-info">
+                          <span className="user-email">{u.email}</span>
+                        </div>
+                        <button className="approve-action-btn" onClick={() => handleApprove(u.id)}>
+                          <Check size={18} />
+                        </button>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 };

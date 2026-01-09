@@ -39,4 +39,5 @@
     "writeMessage": "Write a message...",
     "failedToSendCode": "Failed to send code",
     "invalidCode": "Invalid code"
+    ,"pending":"Pending"
 }

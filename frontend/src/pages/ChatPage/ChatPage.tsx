@@ -18,6 +18,8 @@ import {
   Pencil,
   Trash2,
   Circle,
+  Wifi,
+  WifiOff,
   MessageCircle,
   ArrowRight,
   SendHorizontal
@@ -137,10 +139,10 @@ const ChatPage: React.FC = () => {
             <div className="message message-sent">{config.render(item)}</div>
             <div className="message-action-buttons">
               <button onClick={() => handleEdit(item)} className="button-edit">
-                <Pencil size={14} style={{ marginRight: 4 }} /> Edit
+                <Pencil size={14} /> Edit
               </button>
               <button onClick={() => handleDelete(item.id)} className="button-delete">
-                <Trash2 size={14} style={{ marginRight: 4 }} /> Delete
+                <Trash2 size={14} /> Delete
               </button>
             </div>
           </div>
@@ -150,7 +152,7 @@ const ChatPage: React.FC = () => {
   };
 
   return (
-    <div>
+    <div className="chat-page-root">
       <Toaster position="top-center" />
       {isAdmin && <TabSwiperPopup activeTab={adminTab} onTabChange={setAdminTab} isAdmin={isAdmin} />}
 
@@ -158,12 +160,14 @@ const ChatPage: React.FC = () => {
         <button className="back-btn" onClick={handleBack}>
           <ArrowLeft size={24} />
         </button>
-        <h2 style={{ fontSize: '1.2rem', fontWeight: 600, margin: 0 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, justifyContent: 'center' }}>
+        <h2 className="page-title">
+          <div className="title-row">
             {adminTab === "news" ? <Newspaper size={20} /> : adminTab === "quotes" ? <MessageSquareQuote size={20} /> : <MessageCircle size={20} />}
             {adminTab === "news" ? t('news') : adminTab === "quotes" ? t('quotes') : t('chat')}
             {!adminTab && (
-              <Circle size={10} fill={online ? "#4CAF50" : "#F44336"} color={online ? "#4CAF50" : "#F44336"} />
+              <span className={`status-indicator ${online ? 'online' : 'offline'}`}>
+                {online ? <Wifi size={16} /> : <WifiOff size={16} />}
+              </span>
             )}
           </div>
         </h2>
@@ -187,29 +191,29 @@ const ChatPage: React.FC = () => {
             return (
               <div
                 key={i}
-                className={`message-wrapper ${isOwn ? 'own' : 'other'} ${isSameAsPrev ? 'same-sender' : 'different-sender'}`}
+                className={`message-wrapper ${isOwn ? 'own' : 'other'} ${isSameAsPrev ? 'same-sender' : 'different-sender'} ${isOwn && msg.pending ? 'pending-shift' : ''}`}
               >
                 {!isOwn && !isSameAsPrev && (
                   <div className="sender-name">
                     {msg.profiles?.email?.split('@')[0] || 'Unknown'}
                   </div>
                 )}
-                <div className={`message ${msg.pending ? "message-pending" : isOwn ? "message-sent" : "message-received"}`}>
-                  <div className="message-content">
-                    {msg.message}
-                    {msg.pending && (
-                      <button
-                        className="resend-btn"
-                        title="Resend"
-                        onClick={() => resendMessage(i)}
-                      >
-                        <RefreshCw size={16} />
-                      </button>
-                    )}
+                <div className={`message-row ${isOwn ? 'own' : 'other'} ${msg.pending ? 'pending-shift' : ''}`}>
+                  <div className={`message ${isOwn ? "message-sent" : "message-received"} ${msg.pending ? 'message-pending' : ''}`}>
+                    <div className="message-content">{msg.message}</div>
+                    <div className="message-time">
+                      {new Date(msg.created_at || "").toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    </div>
                   </div>
-                  <div className="message-time">
-                    {new Date(msg.created_at || "").toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                  </div>
+                  {msg.pending && (
+                    <button
+                      className="resend-outside-btn"
+                      title={t('resend') || 'Resend'}
+                      onClick={() => resendMessage(i)}
+                    >
+                      <RefreshCw size={18} />
+                    </button>
+                  )}
                 </div>
               </div>
             );

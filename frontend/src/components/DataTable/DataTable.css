@@ -1,0 +1,13 @@
+/* Hidden table used for export/layout calculations */
+.hidden-table {
+	display: none;
+	width: 100%;
+	border-collapse: collapse;
+	table-layout: fixed;
+}
+
+.hidden-table th,
+.hidden-table td {
+	padding: 6px 8px;
+}
+

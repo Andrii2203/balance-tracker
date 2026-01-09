@@ -3,6 +3,7 @@ import { BrowserRouter as Router } from "react-router-dom";
 import { UserProvider } from "./contexts/UserContext";
 import AppRoutes from "./AppRoutes";
 import './App.css';
+import OfflineBanner from './components/OfflineBanner/OfflineBanner';
 
 function App() {
   React.useEffect(() => {
@@ -15,6 +16,7 @@ function App() {
 
   return (
     <UserProvider>
+      <OfflineBanner />
       <Router>
         <AppRoutes />
       </Router>

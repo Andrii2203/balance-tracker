@@ -39,4 +39,5 @@
     "writeMessage": "Napisz wiadomość...",
     "failedToSendCode": "Nie udalo sie wyslac kodu",
     "invalidCode": "Nieprawidlowy kod"
+    ,"pending":"W kolejce"
 }

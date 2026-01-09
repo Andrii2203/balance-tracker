@@ -28,6 +28,18 @@
     margin-bottom: 0.5rem;
 }
 
+.page-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.section-desc {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.5rem;
+}
+
 /* Input Group */
 .input-group {
     display: flex;
@@ -116,6 +128,14 @@
     border-color: var(--text-primary);
     transform: scale(1.1);
 }
+
+.color-swatch-0 { background-color: #6c5ce7; }
+.color-swatch-1 { background-color: #00cec9; }
+.color-swatch-2 { background-color: #ff7675; }
+.color-swatch-3 { background-color: #fdcb6e; }
+.color-swatch-4 { background-color: #2d3436; }
+.color-swatch-5 { background-color: #e17055; }
+.color-swatch-6 { background-color: #0984e3; }
 
 /* Language Wrapper */
 .language-wrapper {

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useUser } from "../../contexts/UserContext";
 import { useStatisticsQuery } from "../../hooks/queries/useStatisticsQuery";
+import { readCachedRecord } from '../../services/db';
 // import { mapColumn } from "../../helpers/excelColumnMapper";
 import { DataTransformer } from '../../transformers/data.transformer'
 import ChartViewer from "../../components/ChartViewer/ChartViewer";
@@ -36,6 +37,32 @@ const DataViewer: React.FC = () => {
     }
   }, [records, isApproved]);
 
+  // If offline, try to read cached statistics and use them so chart shows
+  useEffect(() => {
+    const tryLoadCached = async () => {
+      if (navigator.onLine) return;
+      try {
+        const rec = await readCachedRecord('statistics');
+        if (rec && rec.value && Array.isArray(rec.value)) {
+          const cachedRecords = rec.value;
+          const columnMap = DataTransformer._mapColumns(cachedRecords[0]);
+          const transformed = cachedRecords.map((row: any) => ({
+            perfectGoal: row[columnMap.perfectGoal],
+            ourMoney: row[columnMap.ourMoney] || 0,
+            actualGoal: row[columnMap.actualGoal] || 0,
+            actualPecent: row[columnMap.actualPecent] || 0,
+            month: row[columnMap.month],
+          }));
+          setFilteredData(transformed);
+          setHeaders(['perfectGoal', 'ourMoney', 'actualGoal', 'actualPecent', 'month']);
+        }
+      } catch (err) {
+        // ignore
+      }
+    };
+    tryLoadCached();
+  }, []);
+
   useEffect(() => {
     const updated = filteredData.reduce((acc, row, index) => {
       acc[index] = translateMonth(row.month);
@@ -50,9 +77,7 @@ const DataViewer: React.FC = () => {
     return (
       <div className="page-container">
         <header className="unified-header">
-          <h2 style={{ fontSize: '1.2rem', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '8px', margin: 0 }}>
-            <BarChart3 size={20} /> {t('charts')}
-          </h2>
+          <h2 className="page-title"><BarChart3 size={20} /> {t('charts')}</h2>
         </header>
 
         <div className="page-content">
@@ -65,7 +90,7 @@ const DataViewer: React.FC = () => {
     );
   }
 
-  if (!records || !records.length) return <p style={{ textAlign: 'center', marginTop: '40px' }}>No data</p>;
+  if (!records || !records.length) return <p className="no-data">No data</p>;
 
   return (
     <div>

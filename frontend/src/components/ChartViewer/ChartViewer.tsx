@@ -55,49 +55,61 @@ const ChartViewer: React.FC<Props> = ({ data }) => {
         ],
     }), [processedData, t]);
 
-    const options = useMemo(() => ({
-        responsive: true,
-        maintainAspectRatio: false,
-        // aspectRatio: 1, // Removed to allow container to control height
-        plugins: {
-            legend: {
-                position: "bottom" as const,
-                align: 'start' as const,
-                labels: { font: { size: 13 } }
-            },
-            tooltip: {
-                callbacks: {
-                    label: (context: any) => {
-                        const index = context.dataIndex;
-                        if (context.dataset.label === t("perfectGoal")) {
-                            return `${context.dataset.label} : $${context.raw}`;
-                        } else {
-                            const percent = processedData.actualPercentData[index];
-                            return `${t("actualGoal")} ${percent}% : $${context.raw}`;
+    const options = useMemo(() => {
+        const yMax = Math.max(100, processedData.maxY || 100);
+        const roundedYMax = Math.ceil(yMax / 50) * 50;
+
+        return ({
+            responsive: true,
+            maintainAspectRatio: false,
+            // aspectRatio: 1, // Removed to allow container to control height
+            plugins: {
+                legend: {
+                    position: "bottom" as const,
+                    align: 'start' as const,
+                    labels: { font: { size: 13 } }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: (context: any) => {
+                            const index = context.dataIndex;
+                            if (context.dataset.label === t("perfectGoal")) {
+                                return `${context.dataset.label} : $${context.raw}`;
+                            } else {
+                                const percent = processedData.actualPercentData[index];
+                                return `${t("actualGoal")} ${percent}% : $${context.raw}`;
+                            }
                         }
                     }
                 }
-            }
-        },
-        scales: {
-            x: { ticks: { font: { size: 13 } } },
-            y: {
-                beginAtZero: true,
-                ticks: {
-                    font: { size: 15 },
-                    callback: (value: number | string) => Number(value) === processedData.maxY ? `$${value}` : value,
-                    color: (ctx: { tick: { value: number } }) => ctx.tick.value === processedData.maxY ? "#FF0000" : "#666",
+            },
+            scales: {
+                x: { ticks: { font: { size: 13 } } },
+                y: {
+                    beginAtZero: true,
+                    min: 0,
+                    max: roundedYMax,
+                    ticks: {
+                        stepSize: 50,
+                        font: { size: 15 },
+                        callback: (value: number | string) => `${value}`,
+                        color: (ctx: any) => (ctx && ctx.tick && ctx.tick.value === roundedYMax) ? "#FF0000" : "#666",
+                    },
                 },
             },
-        },
-    }), [processedData, t]);
+        });
+    }, [processedData, t]);
+
+    const len = processedData.perfectGoalData.length || 0;
+    const sizeClass = len <= 5 ? 'size-sm' : len <= 10 ? 'size-md' : len <= 20 ? 'size-lg' : 'size-xl';
+    const minWidth = Math.max(processedData.perfectGoalData.length * 20, 100);
 
     return (
         <div className="chart-js-box">
-            <div style={{ minWidth: `${Math.max(processedData.perfectGoalData.length * 20, 100)}px` }}>
+            <div className={`chart-meta ${sizeClass}`} style={{ minWidth: `${minWidth}px` }}>
                 <p className="amarkets-p">AMarkets</p>
                 <p className="our-money-p">{ourMoneyText}</p>
-                <div style={{ position: "relative", height: "50vh", width: "100%" }}>
+                <div className="chart-canvas">
                     <Bar data={chartConfig} options={options} />
                 </div>
                 {processedData.differenceFromPrevMonth < 0 && (

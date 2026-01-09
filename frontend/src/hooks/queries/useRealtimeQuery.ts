@@ -60,16 +60,23 @@
 import { useEffect, useRef } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { supabase } from '../../supabaseClient';
+import { logger } from '../../utils/logger';
+import useNetworkStatus from '../useNetworkStatus/useNetworkStatus';
 
 export function useRealtimeQuery(tableName: string, queryKey: any[]) {
     const queryClient = useQueryClient();
     const channelRef = useRef<any>(null);
+    const { isReachable } = useNetworkStatus();
 
     useEffect(() => {
         let isMounted = true;
 
         const initRealtime = async () => {
-            // ⛔ Уже є канал — нічого не робимо
+            if (!isReachable) {
+                logger.info(`📴 Network not reachable — skipping realtime for ${tableName}`);
+                return;
+            }
+
             if (channelRef.current) return;
 
             const { data: { session } } = await supabase.auth.getSession();
@@ -91,12 +98,12 @@ export function useRealtimeQuery(tableName: string, queryKey: any[]) {
                                     newData.push(payload.new);
                                     break;
                                 case 'UPDATE':
-                                    newData = newData.map(r =>
+                                    newData = newData.map((r: any) =>
                                         r.id === payload.new.id ? payload.new : r
                                     );
                                     break;
                                 case 'DELETE':
-                                    newData = newData.filter(r => r.id !== payload.old.id);
+                                    newData = newData.filter((r: any) => r.id !== payload.old.id);
                                     break;
                             }
 
@@ -105,7 +112,7 @@ export function useRealtimeQuery(tableName: string, queryKey: any[]) {
                     }
                 )
                 .subscribe((status) => {
-                    console.log('Realtime status:', status);
+                    logger.debug('Realtime status:', status);
                 });
 
             channelRef.current = channel;
@@ -115,11 +122,10 @@ export function useRealtimeQuery(tableName: string, queryKey: any[]) {
 
         return () => {
             isMounted = false;
-
             if (channelRef.current) {
-                supabase.removeChannel(channelRef.current);
+                try { supabase.removeChannel(channelRef.current); } catch (e) { logger.warn('Failed to remove channel', e); }
                 channelRef.current = null;
             }
         };
-    }, [tableName]); // ❗ queryKey прибрали
+    }, [tableName, queryClient, isReachable, JSON.stringify(queryKey)]);
 }

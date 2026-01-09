@@ -39,4 +39,5 @@
     "writeMessage": "Напиши повідомлення...",
     "failedToSendCode": "Не вдалося надіслати код",
     "invalidCode": "Невірний код"
+    ,"pending":"В черзі"
 }

@@ -3,3 +3,28 @@
   padding: 0;
   margin: 0;
 }
+
+.page-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+}
+
+.quotes-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.quote-text {
+  font-style: italic;
+  font-size: 1.05rem;
+}
+
+.quote-meta {
+  margin-left: 10px;
+  opacity: 0.7;
+}

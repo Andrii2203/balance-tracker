@@ -12,6 +12,9 @@
 # production
 /build
 
+# tasks
+/frontend/TASKS
+
 # misc
 .DS_Store
 .env

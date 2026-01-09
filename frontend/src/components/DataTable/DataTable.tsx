@@ -17,12 +17,7 @@ const DataTable: React.FC<Props> = ({ headers, filteredData, translatedMonths })
         border={1}
         cellPadding={5}
         cellSpacing={0}
-        style={{ 
-          display: 'none', 
-          width: "100%", 
-          borderCollapse: "collapse", 
-          tableLayout: "fixed" 
-        }}
+        className="hidden-table"
       >
         <thead>
           <tr>

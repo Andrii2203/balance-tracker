@@ -28,6 +28,26 @@
     color: black;
     font-family: 'Times New Roman', Times, serif;
     font-weight: 600;
+}
+
+.chart-meta {
+  display: flex;
+  flex-direction: column;
+}
+
+.chart-canvas {
+    position: relative;
+    height: 450px !important;
+    width: 100%;
+}
+
+/* sizing buckets to replace dynamic inline minWidth */
+.chart-meta.size-sm { min-width: 100px; }
+.chart-meta.size-md { min-width: 200px; }
+.chart-meta.size-lg { min-width: 400px; }
+.chart-meta.size-xl { min-width: 600px; }
+
+.our-money-p {
     background-color: rgb(230, 230, 230);
 }
 

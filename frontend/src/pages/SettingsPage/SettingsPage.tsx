@@ -70,7 +70,7 @@ const SettingsPage: React.FC = () => {
                 <button onClick={() => navigate(-1)} className="back-btn">
                     <ArrowLeft size={24} />
                 </button>
-                <h2 style={{ fontSize: '1.2rem', fontWeight: 600, margin: 0 }}>{t('settings')}</h2>
+                <h2 className="page-title">{t('settings')}</h2>
             </header>
 
             <main className="page-content settings-content">
@@ -104,15 +104,12 @@ const SettingsPage: React.FC = () => {
                         <Palette size={20} />
                         {t('appearance')}
                     </h3>
-                    <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', marginBottom: '0.5rem' }}>
-                        {t('themeColor')}
-                    </p>
+                    <p className="section-desc">{t('themeColor')}</p>
                     <div className="color-picker-grid">
-                        {THEME_COLORS.map(color => (
+                        {THEME_COLORS.map((color, idx) => (
                             <button
                                 key={color}
-                                className={`color-swatch ${themeColor === color ? 'active' : ''}`}
-                                style={{ backgroundColor: color }}
+                                className={`color-swatch color-swatch-${idx} ${themeColor === color ? 'active' : ''}`}
                                 onClick={() => handleColorChange(color)}
                             >
                                 {themeColor === color && <Check size={14} color="white" />}

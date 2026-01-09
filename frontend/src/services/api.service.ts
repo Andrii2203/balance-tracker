@@ -1,24 +1,26 @@
 import { supabase } from '../supabaseClient';
 
 export const StatisticsService = {
-    async fetchStatistics() {
-        const { data, error } = await supabase
-            .from('statistics')
-            .select('*')
-            .order('id', { ascending: true });
-
+    async fetchStatistics(since?: string) {
+        if (typeof navigator !== 'undefined' && !navigator.onLine) {
+            return [] as any[];
+        }
+        let q = supabase.from('statistics').select('*');
+        if (since) q = q.gt('updated_at', since);
+        const { data, error } = await q.order('id', { ascending: true });
         if (error) throw error;
         return data;
     }
 };
 
 export const NewsService = {
-    async fetchNews() {
-        const { data, error } = await supabase
-            .from('news')
-            .select('*')
-            .order('created_at', { ascending: false });
-
+    async fetchNews(since?: string) {
+        if (typeof navigator !== 'undefined' && !navigator.onLine) {
+            return [] as any[];
+        }
+        let q = supabase.from('news').select('*');
+        if (since) q = q.gt('updated_at', since);
+        const { data, error } = await q.order('created_at', { ascending: false });
         if (error) throw error;
         return data;
     },
@@ -39,12 +41,13 @@ export const NewsService = {
 };
 
 export const QuotesService = {
-    async fetchQuotes() {
-        const { data, error } = await supabase
-            .from('quotes')
-            .select('*')
-            .order('id', { ascending: true });
-
+    async fetchQuotes(since?: string) {
+        if (typeof navigator !== 'undefined' && !navigator.onLine) {
+            return [] as any[];
+        }
+        let q = supabase.from('quotes').select('*');
+        if (since) q = q.gt('updated_at', since);
+        const { data, error } = await q.order('id', { ascending: true });
         if (error) throw error;
         return data;
     },
@@ -72,6 +75,9 @@ export const AuthService = {
     },
 
     async fetchProfile(uid: string) {
+        if (typeof navigator !== 'undefined' && !navigator.onLine) {
+            return null;
+        }
         const { data, error } = await supabase
             .from('profiles')
             .select('*, is_approved')

@@ -16,7 +16,9 @@ body {
   flex-direction: column;
   padding: 85px 0 110px 0;
   /* Space for fixed header and floating input */
-  min-height: 100vh;
+  height: 100%;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
   background-color: #ffffff;
   box-sizing: border-box;
 }
@@ -40,7 +42,7 @@ body {
 }
 
 .message-wrapper.same-sender {
-  margin-top: 1px;
+  margin-bottom: 4px;
 }
 
 .message-wrapper.different-sender {
@@ -60,6 +62,9 @@ body {
   line-height: 1.4;
   position: relative;
   word-wrap: break-word;
+  box-sizing: border-box; /* ensure padding+borders don't change outer size */
+  border: 1px solid transparent; /* keep consistent box size when showing pending border */
+  transition: transform 180ms cubic-bezier(.22,.9,.36,1), border-color 140ms linear, background-color 140ms linear;
 }
 
 .message-sent {
@@ -84,6 +89,111 @@ body {
 .message-sent .message-time {
   color: rgba(255, 255, 255, 0.6);
   text-align: right;
+}
+
+/* Pending message state (offline-sent) */
+.message-pending {
+  box-shadow: none;
+}
+
+/* Resend button for pending messages - small and subdued */
+.resend-btn {
+  background: transparent;
+  border: none;
+  color: transparent;
+  cursor: pointer;
+  padding: 2px;
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute; /* absolute so it doesn't affect bubble width */
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.resend-btn svg {
+  width: 16px;
+  height: 16px;
+  stroke: #c13584; /* instagram-like magenta */
+  fill: none;
+}
+
+.resend-btn:hover svg {
+  stroke: #833ab4; /* slightly darker gradient-like tint on hover */
+}
+
+/* Small pending badge in top-right of the bubble */
+.message-wrapper { position: relative; }
+.pending-badge {
+  position: absolute;
+  top: -8px;
+  right: -4px;
+  background: rgba(0,0,0,0.06);
+  color: rgba(0,0,0,0.7);
+  font-size: 11px;
+  padding: 2px 6px;
+  border-radius: 12px;
+
+
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 2px;
+  max-width: 75%;
+}
+
+/* New message row wrapper to host bubble + outside resend control */
+.message-row {
+  position: relative; /* anchor for absolute outside button */
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Hide the legacy pending badge — using external resend control instead */
+.pending-badge {
+  display: none;
+}
+
+/* Outside resend button: positioned outside the bubble so it doesn't affect bubble width */
+.resend-outside-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  /* padding: 4px; */
+  /* border-radius: 6px; */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+}
+
+/* For own messages place the resend icon to the right, for others to the left */
+.message-row.own .resend-outside-btn {
+  right: -25px; /* stay inside wrapper */
+}
+.message-row.other .resend-outside-btn {
+  left: 16px;
+}
+
+.resend-outside-btn svg {
+  width: 18px;
+  height: 18px;
+  stroke: var(--icon-color);
+  fill: none;
+}
+
+.resend-outside-btn:hover svg {
+  stroke: var(--icon-color);
+}
+
+/* Shift own pending messages left so the outside icon sits between bubble and screen edge */
+.message-wrapper.own.pending-shift {
+  padding-right: 32px; /* create space on the right for the outside icon without clipping */
 }
 
 /* Redesigned Input Container (matching BottomNav) */
@@ -169,6 +279,43 @@ body {
   padding-top: 85px !important;
 }
 
+/* Status indicator (online/offline) - filled circle */
+.status-indicator {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.status-indicator.online {
+  color: #4CAF50; /* green */
+}
+.status-indicator.offline {
+  color: #F44336; /* red */
+}
+.status-indicator svg {
+  fill: currentColor !important;
+  stroke: none !important;
+  width: 16px;
+  height: 16px;
+}
+
+.button-edit svg,
+.button-delete svg {
+  margin-right: 4px;
+}
+
+.page-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.title-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: center;
+}
+
 .message-action-buttons {
   display: flex;
   gap: 8px;
@@ -194,4 +341,11 @@ body {
 .glassContainer,
 .glassContainerInput {
   display: none !important;
+}
+
+/* Ensure the page root fills viewport so chat container can scroll */
+.chat-page-root {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }

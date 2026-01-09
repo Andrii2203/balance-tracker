@@ -1,0 +1,15 @@
+.bt-offline-banner {
+  position: fixed;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0,0,0,0.8);
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: 8px;
+  z-index: 9999;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.2);
+  font-size: 13px;
+}
+.bt-offline-title { font-weight: 600; }
+.bt-offline-sub { font-size: 12px; opacity: 0.9; }

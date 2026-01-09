@@ -5,6 +5,7 @@ import LanguageSwitcher from "../LanguageSwitcher/LanguageSwitcher";
 import { toast } from "sonner";
 import { ArrowRight } from "lucide-react";
 import './LoginPanel.css';
+import { logger } from '../../utils/logger';
 
 interface LoginPanelProps {
     showLanguageSwitcher?: boolean;
@@ -104,6 +105,27 @@ const LoginPanel: React.FC<LoginPanelProps> = ({ showLanguageSwitcher = false })
                     <LanguageSwitcher />
                 </div>
             )}
+
+                    {process.env.REACT_APP_FORCE_APPROVE === 'true' && (
+                        <div style={{ marginTop: 12 }}>
+                            <button
+                                type="button"
+                                className="shared-button"
+                                onClick={() => {
+                                try {
+                                    localStorage.setItem('bt:dev_user', 'true');
+                                    localStorage.setItem('user_name', 'Dev User');
+                                    logger.info('Dev skip login clicked, flag set bt:dev_user=true');
+                                } catch (err) {
+                                    logger.warn('Dev skip login failed to set localStorage', err);
+                                }
+                                window.location.href = '/';
+                            }}
+                            >
+                                {t('devSkipLogin') || 'Dev: Skip login'}
+                            </button>
+                        </div>
+                    )}
         </div>
     );
 };

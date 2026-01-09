@@ -27,7 +27,6 @@ const BottomNav: React.FC<BottomNavProps> = ({ items }) => {
                         }
                     >
                         <IconComponent size={24} strokeWidth={2} />
-                        {/* <span className="nav-label">{item.label}</span> */}
                     </NavLink>
                 );
             })}
