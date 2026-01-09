@@ -329,19 +329,29 @@ export const useChatLogic = () => {
       initializedRef.current = true;
       logger.info('[chat] Initial load');
       loadMessages();
+      // Create realtime channel on initial load
+      createChannel();
     }
-  }, [user?.id, loadMessages]);
+  }, [user?.id, loadMessages, createChannel]);
 
   // Network listeners
   useEffect(() => {
     window.addEventListener('online', handleOnline);
     window.addEventListener('offline', handleOffline);
 
+    // Sync when user returns to the tab
+    const handleFocus = () => {
+      logger.info('[chat] Window focused - syncing');
+      syncFromServer();
+    };
+    window.addEventListener('focus', handleFocus);
+
     return () => {
       window.removeEventListener('online', handleOnline);
       window.removeEventListener('offline', handleOffline);
+      window.removeEventListener('focus', handleFocus);
     };
-  }, [handleOnline, handleOffline]);
+  }, [handleOnline, handleOffline, syncFromServer]);
 
   // Cleanup on unmount
   useEffect(() => {
