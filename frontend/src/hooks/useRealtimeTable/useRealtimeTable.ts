@@ -27,13 +27,13 @@ export function useRealtimeTable<T extends BaseRecord>(tableName: string, option
     }
 
     if (channelRef.current) {
-      logger.info(`🔌 Cleaning up previous subscription for ${tableName}`);
+      logger.info(`Cleaning up previous subscription for ${tableName}`);
       try { channelRef.current.unsubscribe(); } catch (e) { logger.warn('Failed to unsubscribe previous channel', e); }
     }
 
     const fetchData = async () => {
       setLoading(true);
-      logger.info(`🔄 Fetching ${tableName}...`);
+      logger.info(`Fetching ${tableName}...`);
 
       // Simple fetch without strict ordering that might fail
       const { data, error } = await supabase
@@ -41,10 +41,10 @@ export function useRealtimeTable<T extends BaseRecord>(tableName: string, option
         .select("*");
 
       if (error) {
-        logger.error(`❌ Error fetching ${tableName}:`, error.message);
+        logger.error(`Error fetching ${tableName}:`, error.message);
         setError(error.message);
       } else {
-        logger.info(`✅ Fetched ${tableName}`);
+        logger.info(`Fetched ${tableName}`);
         // Sort in memory if created_at exists
         const sorted = data ? [...data].sort((a, b) => {
           if (a.created_at && b.created_at) {
@@ -60,7 +60,7 @@ export function useRealtimeTable<T extends BaseRecord>(tableName: string, option
     (async () => {
       // If not reachable, try to load cached record and skip network operations
       if (!isReachable) {
-        logger.info(`📴 Network not reachable — restoring cached data for ${tableName}`);
+        logger.info(`Network not reachable - restoring cached data for ${tableName}`);
         try {
           const rec = await readCachedRecord(tableName);
           if (rec && rec.value && Array.isArray(rec.value)) {
@@ -82,12 +82,12 @@ export function useRealtimeTable<T extends BaseRecord>(tableName: string, option
           "postgres_changes",
           { event: "*", schema: "public", table: tableName },
           (payload: any) => {
-            logger.debug(`📡 Realtime event on ${tableName}: ${payload.eventType}`, payload);
+            logger.debug(`Realtime event on ${tableName}: ${payload.eventType}`, payload);
 
             const eventKey = `${payload.eventType}-${payload.new?.id || payload.old?.id}-${payload.commit_timestamp}`;
 
             if (processedEventsRef.current.has(eventKey)) {
-              logger.debug(`⚠️ Duplicate event detected, skipping: ${eventKey}`);
+              logger.debug(`Duplicate event detected, skipping: ${eventKey}`);
               return;
             }
 
@@ -107,42 +107,42 @@ export function useRealtimeTable<T extends BaseRecord>(tableName: string, option
               switch (payload.eventType) {
                 case "INSERT":
                   if (!updated.find(r => r.id === newRow.id)) {
-                    logger.info(`➕ INSERT: Adding ${tableName} with id ${newRow.id}`);
+                    logger.info(`INSERT: Adding ${tableName} with id ${newRow.id}`);
                     updated = [...updated, newRow];
                     changed = true;
                   } else {
-                    logger.warn(`⚠️ INSERT skipped - id ${newRow.id} already exists`);
+                    logger.warn(`INSERT skipped - id ${newRow.id} already exists`);
                   }
                   break;
 
                 case "UPDATE":
                   const oldIndex = updated.findIndex(r => r.id === newRow.id);
                   if (oldIndex !== -1) {
-                    logger.info(`✏️ UPDATE: Updating ${tableName} id ${newRow.id}`);
+                    logger.info(`UPDATE: Updating ${tableName} id ${newRow.id}`);
                     updated[oldIndex] = newRow;
                     changed = true;
                   } else {
-                    logger.warn(`⚠️ UPDATE skipped - id ${newRow.id} not found`);
+                    logger.warn(`UPDATE skipped - id ${newRow.id} not found`);
                   }
                   break;
 
                 case "DELETE":
                   const deleteIndex = updated.findIndex(r => r.id === oldId);
                   if (deleteIndex !== -1) {
-                    logger.info(`🗑️ DELETE: Removing ${tableName} id ${oldId}`);
+                    logger.info(`DELETE: Removing ${tableName} id ${oldId}`);
                     updated = updated.filter((r) => r.id !== oldId);
                     changed = true;
                   } else {
-                    logger.warn(`⚠️ DELETE skipped - id ${oldId} not found`);
+                    logger.warn(`DELETE skipped - id ${oldId} not found`);
                   }
                   break;
 
                 default:
-                  logger.warn(`⚠️ Unknown event type: ${payload.eventType}`);
+                  logger.warn(`Unknown event type: ${payload.eventType}`);
               }
 
               if (changed) {
-                logger.debug(`📊 Updated ${tableName} after ${payload.eventType}`);
+                logger.debug(`Updated ${tableName} after ${payload.eventType}`);
               }
 
               return changed ? updated : prev;
@@ -154,83 +154,8 @@ export function useRealtimeTable<T extends BaseRecord>(tableName: string, option
       channelRef.current = channel;
     })();
 
-    const channel = supabase
-      .channel(`${tableName}-realtime-${Date.now()}`)
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: tableName },
-        (payload: any) => {
-          logger.debug(`📡 Realtime event on ${tableName}: ${payload.eventType}`, payload);
-
-          const eventKey = `${payload.eventType}-${payload.new?.id || payload.old?.id}-${payload.commit_timestamp}`;
-
-          if (processedEventsRef.current.has(eventKey)) {
-            logger.debug(`⚠️ Duplicate event detected, skipping: ${eventKey}`);
-            return;
-          }
-
-          processedEventsRef.current.add(eventKey);
-
-          if (processedEventsRef.current.size > 100) {
-            processedEventsRef.current.clear();
-          }
-
-          const newRow = payload.new as T;
-          const oldId = (payload.old as T)?.id;
-
-          setData((prev) => {
-            let updated = [...prev];
-            let changed = false;
-
-            switch (payload.eventType) {
-              case "INSERT":
-                if (!updated.find(r => r.id === newRow.id)) {
-                  logger.info(`➕ INSERT: Adding ${tableName} with id ${newRow.id}`);
-                  updated = [...updated, newRow];
-                  changed = true;
-                } else {
-                  logger.warn(`⚠️ INSERT skipped - id ${newRow.id} already exists`);
-                }
-                break;
-
-              case "UPDATE":
-                const oldIndex = updated.findIndex(r => r.id === newRow.id);
-                if (oldIndex !== -1) {
-                  logger.info(`✏️ UPDATE: Updating ${tableName} id ${newRow.id}`);
-                  updated[oldIndex] = newRow;
-                  changed = true;
-                } else {
-                  logger.warn(`⚠️ UPDATE skipped - id ${newRow.id} not found`);
-                }
-                break;
-
-              case "DELETE":
-                const deleteIndex = updated.findIndex(r => r.id === oldId);
-                if (deleteIndex !== -1) {
-                  logger.info(`🗑️ DELETE: Removing ${tableName} id ${oldId}`);
-                  updated = updated.filter((r) => r.id !== oldId);
-                  changed = true;
-                } else {
-                  logger.warn(`⚠️ DELETE skipped - id ${oldId} not found`);
-                }
-                break;
-
-              default:
-                logger.warn(`⚠️ Unknown event type: ${payload.eventType}`);
-            }
-
-            if (changed) {
-              logger.debug(`📊 Updated ${tableName} after ${payload.eventType}`);
-            }
-
-            return changed ? updated : prev;
-          });
-        }
-      )
-      .subscribe();
-
     return () => {
-      logger.info(`🔌 Unsubscribing from ${tableName}`);
+      logger.info(`Unsubscribing from ${tableName}`);
       try { channelRef.current?.unsubscribe(); } catch (e) { logger.warn('Failed to unsubscribe channel', e); }
       channelRef.current = null;
     };
@@ -238,14 +163,14 @@ export function useRealtimeTable<T extends BaseRecord>(tableName: string, option
 
 
   const insert = async (record: Omit<T, "id" | "created_at">) => {
-    logger.info(`📝 Inserting into ${tableName}:`, record);
+    logger.info(`Inserting into ${tableName}:`, record);
     const { data: newData, error } = await supabase
       .from(tableName)
       .insert([record])
       .select();
 
     if (error) {
-      logger.error(`❌ Insert error:`, error.message);
+      logger.error(`Insert error:`, error.message);
       setError(error.message);
       return null;
     }
@@ -257,7 +182,7 @@ export function useRealtimeTable<T extends BaseRecord>(tableName: string, option
   };
 
   const update = async (id: number | string, record: Partial<T>) => {
-    logger.info(`📝 Updating ${tableName} id ${id}:`, record);
+    logger.info(`Updating ${tableName} id ${id}:`, record);
     const { data: updated, error } = await supabase
       .from(tableName)
       .update(record)
@@ -265,21 +190,21 @@ export function useRealtimeTable<T extends BaseRecord>(tableName: string, option
       .select();
 
     if (error) {
-      logger.error(`❌ Update error:`, error.message);
+      logger.error(`Update error:`, error.message);
       setError(error.message);
     } else {
-      logger.info(`✅ Update successful:`, updated);
+      logger.info(`Update successful:`, updated);
     }
   };
 
   const remove = async (id: number | string) => {
-    logger.info(`📝 Deleting ${tableName} id ${id}`);
+    logger.info(`Deleting ${tableName} id ${id}`);
     const { error } = await supabase.from(tableName).delete().eq("id", id);
     if (error) {
-      logger.error(`❌ Delete error:`, error.message);
+      logger.error(`Delete error:`, error.message);
       setError(error.message);
     } else {
-      logger.info(`✅ Delete successful`);
+      logger.info(`Delete successful`);
     }
   };
 
