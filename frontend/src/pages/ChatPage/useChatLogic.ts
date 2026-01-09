@@ -248,34 +248,43 @@ export const useChatLogic = () => {
         .channel(CHANNEL_NAME)
         .on(
           'postgres_changes',
-          { event: 'INSERT', schema: 'public', table: 'chat_messages' },
+          { event: '*', schema: 'public', table: 'chat_messages' },
           async (payload) => {
-            const newMsg = payload.new as LocalMessage;
-            logger.info('[chat] Realtime new message', { clientId: newMsg.client_id });
+            logger.info('[chat] Realtime event', { eventType: payload.eventType, payload });
 
-            // Check if already exists
-            const exists = messages.some(m => m.client_id === newMsg.client_id);
-            if (exists) {
-              logger.debug('[chat] Message already in state');
-              return;
+            if (payload.eventType === 'INSERT') {
+              const newMsg = payload.new as LocalMessage;
+
+              // Check if already exists
+              const exists = messages.some(m => m.client_id === newMsg.client_id);
+              if (exists) {
+                logger.debug('[chat] Message already in state');
+                return;
+              }
+
+              // Save to IndexedDB
+              await saveMessage({
+                client_id: newMsg.client_id,
+                user_id: newMsg.user_id,
+                message: newMsg.message,
+                created_at: newMsg.created_at,
+                pending: 0,
+                profiles: newMsg.profiles,
+              });
+
+              // Update state
+              setMessages(prev => [...prev, newMsg]);
+            } else if (payload.eventType === 'DELETE') {
+              const oldMsg = payload.old as LocalMessage;
+              logger.info('[chat] Realtime delete message', { clientId: oldMsg.client_id });
+
+              // Remove from state
+              setMessages(prev => prev.filter(m => m.client_id !== oldMsg.client_id));
             }
-
-            // Save to IndexedDB
-            await saveMessage({
-              client_id: newMsg.client_id,
-              user_id: newMsg.user_id,
-              message: newMsg.message,
-              created_at: newMsg.created_at,
-              pending: 0,
-              profiles: newMsg.profiles,
-            });
-
-            // Update state
-            setMessages(prev => [...prev, newMsg]);
           }
         )
         .subscribe();
-        
+
       logger.debug('[chat] Realtime channel created');
     } catch (error) {
       logger.warn('[chat] Failed to create channel', { error });
