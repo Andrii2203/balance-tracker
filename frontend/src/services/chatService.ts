@@ -190,7 +190,23 @@ export const syncMessagesToLocal = async (): Promise<boolean> => {
     logger.info('[chatService] Starting sync to IndexedDB');
     
     const serverMessages = await fetchMessagesFromServer();
+    const serverClientIds = new Set(serverMessages.map(m => m.client_id));
     
+    // Import db dynamically to avoid circular dependencies
+    const { db } = await import('./db');
+    
+    // Get all local messages
+    const localMessages = await db.messages.toArray();
+    
+    // Remove local messages that don't exist on server
+    for (const localMsg of localMessages) {
+      if (!serverClientIds.has(localMsg.client_id)) {
+        logger.info('[chatService] Removing deleted message from IndexedDB', { clientId: localMsg.client_id });
+        await db.messages.delete(localMsg.id!);
+      }
+    }
+    
+    // Add new messages from server
     for (const msg of serverMessages) {
       // Check if already exists by client_id
       const exists = await messageExistsByClientId(msg.client_id);
@@ -206,7 +222,7 @@ export const syncMessagesToLocal = async (): Promise<boolean> => {
       }
     }
     
-    logger.info('[chatService] Sync complete', { count: serverMessages.length });
+    logger.info('[chatService] Sync complete', { serverCount: serverMessages.length, localCount: localMessages.length });
     return true;
   } catch (err) {
     logger.error('[chatService] Sync failed', { err });
